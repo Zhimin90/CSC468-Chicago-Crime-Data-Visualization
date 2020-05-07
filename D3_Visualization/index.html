@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>
+  <script src="https://d3js.org/d3-geo.v1.min.js"></script>
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
+
+  <style>
+    body {
+      margin: 0;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    #map {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
+
+    //Setup mapbox-gl map
+    var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v9',
+      center: [-87.635, 41.9199],
+      zoom: 10.00,
+
+    })
+    //map.scrollZoom.disable()
+    map.addControl(new mapboxgl.Navigation());
+    map.dragRotate.disable();
+
+    // Setup our svg layer that we can manipulate with d3
+    var container = map.getCanvasContainer()
+    var svg = d3.select(container).append("svg")
+
+    // we calculate the scale given mapbox state (derived from viewport-mercator-project's code)
+    // to define a d3 projection
+    function getD3() {
+      var bbox = document.body.getBoundingClientRect();
+      var center = map.getCenter();
+      var zoom = map.getZoom();
+      // 512 is hardcoded tile size, might need to be 256 or changed to suit your map config
+      var scale = (512) * 0.5 / Math.PI * Math.pow(2, zoom);
+      //console.log(center.lng, center.lat)
+      var d3projection = d3.geoMercator()
+        .center([center.lng, center.lat])
+        .translate([bbox.width / 2, bbox.height / 2])
+        .scale(scale);
+
+      return d3projection;
+    }
+    // calculate the original d3 projection
+    //var d3Projection = getD3();
+
+   
+    var g = svg.append('g');
+    var mapLayer = g.append('g')
+      .classed('map-layer', true);
+
+    var path =  d3.geoPath()
+    //var url = "geojson_density_map.json";
+    var url = "Crime_2020_lowres.geojson"
+    var rasterData = {}
+    var bound_url = "Boundaries - Wards (2015-).geojson"
+
+    d3.json(bound_url, function (err, data) {
+      console.log(data)
+      var features = data.features;
+
+      function render1() {
+          console.log("render1")
+          mapLayer.selectAll('path.map-layer-bound').remove();
+          mapLayer.selectAll('path.map-layer-bound')
+            .data(features)
+            .enter()
+            .append('path')
+            .classed('map-layer-bound', true)
+            .attr('d', path.projection(getD3()))
+            .attr('vector-effect', 'non-scaling-stroke')
+            .style('stroke', "black")
+            .style('fill', "none");
+      }
+
+      d3.json(url, function (err, data) {
+        console.log(data)
+        var features = data.features;
+        // Define color scale
+        var color = d3.scaleOrdinal().domain([d3.range(1, 50, 1)])
+        .range(["gold", "blue", "green", "yellow", "black", "grey", "darkgreen", "pink", "brown", "slateblue", "grey1", "orange"])
+      
+        function render() {
+          // Draw each province as a path
+          mapLayer.selectAll('path.map-layer-val').remove();
+          mapLayer.selectAll('path')
+            .data(features)
+            .enter()
+            .append('path')
+            .classed('map-layer-val', true)
+            .attr('d', path.projection(getD3()))
+            .attr('vector-effect', 'non-scaling-stroke')
+            .attr("fill-opacity", function (data, i) { return (data.properties.raster_val/255 * 4 ) })
+            .style('fill', function (data, i) { return color(data.properties.ward) });
+        }
+
+        // render our initial visualization
+        render()
+
+        // re-render our visualization whenever the view changes
+        map.on("viewreset", function () {
+          render()
+          render1()
+        })
+        map.on("move", function () {
+          render()
+          render1()
+        })
+
+      });
+
+      // render our initial visualization
+      render1()
+
+    });
+
+    // Get province name length
+    function nameLength(d) {
+      var n = nameFn(d);
+      return n ? n.length : 0;
+    }
+
+    // Get province color
+    function fillFn(d) {
+      return color(Math.random());
+    }
+
+    function mouseover(d) {
+      // Highlight hovered province
+      d3.select(this).style('fill', 'orange');
+
+      // Draw effects
+      textArt(nameFn(d));
+    }
+
+    function mouseout(d) {
+      // Reset province color
+      mapLayer.selectAll('path')
+        .style('fill', function (d) { return centered && d === centered ? '#D5708B' : fillFn(d); });
+
+      // Remove effect text
+      effectLayer.selectAll('text').transition()
+        .style('opacity', 0)
+        .remove();
+
+      // Clear province name
+      bigText.text('');
+    }
+
+    // When clicked, zoom in
+    function clicked(d) {
+      var x, y, k;
+
+      // Compute centroid of the selected path
+      if (d && centered !== d) {
+        var centroid = path.centroid(d);
+        x = centroid[0];
+        y = centroid[1];
+        k = 4;
+        centered = d;
+      } else {
+        x = width / 2;
+        y = height / 2;
+        k = 1;
+        centered = null;
+      }// Highlight the clicked province
+      mapLayer.selectAll('path')
+        .style('fill', function (d) { return centered && d === centered ? '#D5708B' : fillFn(d); });
+
+      // Zoom
+      g.transition()
+        .duration(750)
+        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
+    }
+
+  </script>
+</body>

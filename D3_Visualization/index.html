@@ -89,7 +89,7 @@
       console.log(data)
       var features = data.features;
 
-      function render1() {
+      function renderBoundaries() {
           console.log("render1")
           mapLayer.selectAll('path.map-layer-bound').remove();
           mapLayer.selectAll('path.map-layer-bound')
@@ -102,12 +102,11 @@
             .style('stroke', "black")
             .attr("fill-opacity","0.2") 
             .style('fill', "lightblue")
-            .on("click",function(d){ 
-              d3.select(this).style("fill","red") //on click, fills district red
+            .on("mouseover",mouseOver) //turns the grid light pink when you mouse over it
+            .on("mouseout",mouseOut) //when you move mouse out of area, it goes back to normal
+            .on("click",mouseClick) //when you click on area, it turns dark red. 
               //alert("ward is:" + d.properties.ward)
-            }); 
-;
-      }
+            }; 
 
       d3.json(url, function (err, data) {
         console.log(data)
@@ -130,25 +129,27 @@
             .style('fill', function (data, i) { return color(data.properties.ward) })
         }
 
+        
         // renders the rastermap
-  //      render()
+//        render()
 
         // re-render our visualization whenever the view changes
         map.on("viewreset", function () {
  //         render()
-          render1()
+          renderBoundaries()
         })
         map.on("move", function () {
  //         render()
-          render1()
-        }) 
+          renderBoundaries()
+              }) 
 
-      });
+            });
 
-      // render our initial visualization
-      render1()
+            // render our initial visualization
+            renderBoundaries()
 
-    });
+          }); //end of jsonBound function
+
 
     // Get province name length
     function nameLength(d) {
@@ -161,26 +162,32 @@
       return color(Math.random());
     }
 
-    function mouseover(d) {
-      // Highlight hovered province
-      d3.select(this).style('fill', 'orange');
-
-      // Draw effects
-      textArt(nameFn(d));
+    function mouseClick(d) {
+      d3.select(this)
+        .classed("clicked",true)
+        .style("fill","red")
+    }
+    
+    function mouseOut(d) {
+      var c= d3.select(this)
+      if (c.classed("clicked")){
+        c.style("fill", "red")
+      } else{
+        d3.select(this).attr("fill-opacity","0.2") 
+        .style('fill', "lightblue")
+      }
     }
 
-    function mouseout(d) {
-      // Reset province color
-      mapLayer.selectAll('path')
-        .style('fill', function (d) { return centered && d === centered ? '#D5708B' : fillFn(d); });
-
-      // Remove effect text
-      effectLayer.selectAll('text').transition()
-        .style('opacity', 0)
-        .remove();
-
-      // Clear province name
-      bigText.text('');
+    function mouseOver(d) {
+      var c=d3.select(this)
+      if (c.classed("clicked")){
+        c.style("fill","darkred")
+      }
+      else{
+      d3.select(this).style("fill","pink");
+      // Draw effects
+      textArt(nameFn(d));
+      }
     }
 
     // When clicked, zoom in

@@ -100,7 +100,13 @@
             .attr('d', path.projection(getD3()))
             .attr('vector-effect', 'non-scaling-stroke')
             .style('stroke', "black")
-            .style('fill', "none");
+            .attr("fill-opacity","0.2") 
+            .style('fill', "lightblue")
+            .on("click",function(d){ 
+              d3.select(this).style("fill","red") //on click, fills district red
+              //alert("ward is:" + d.properties.ward)
+            }); 
+;
       }
 
       d3.json(url, function (err, data) {
@@ -121,21 +127,21 @@
             .attr('d', path.projection(getD3()))
             .attr('vector-effect', 'non-scaling-stroke')
             .attr("fill-opacity", function (data, i) { return (data.properties.raster_val/255 * 4 ) })
-            .style('fill', function (data, i) { return color(data.properties.ward) });
+            .style('fill', function (data, i) { return color(data.properties.ward) })
         }
 
-        // render our initial visualization
-        render()
+        // renders the rastermap
+  //      render()
 
         // re-render our visualization whenever the view changes
         map.on("viewreset", function () {
-          render()
+ //         render()
           render1()
         })
         map.on("move", function () {
-          render()
+ //         render()
           render1()
-        })
+        }) 
 
       });
 
@@ -201,7 +207,7 @@
       g.transition()
         .duration(750)
         .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
-    }
+    } 
 
   </script>
 </body>

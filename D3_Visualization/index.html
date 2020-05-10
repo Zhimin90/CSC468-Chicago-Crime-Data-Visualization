@@ -50,6 +50,7 @@
     //map.scrollZoom.disable()
     map.addControl(new mapboxgl.Navigation());
     map.dragRotate.disable();
+    map.doubleClickZoom.disable();
 
     // Setup our svg layer that we can manipulate with d3
     var container = map.getCanvasContainer()
@@ -85,18 +86,25 @@
     var rasterData = {}
     var bound_url = "Boundaries - Wards (2015-).geojson"
 
+    var clickedColor = "red";
+    var baseColor = "lightblue"
+    var highlightUnselected = "pink"
+    var highlightSelected = "darkred"
+    var clickedLog = {};
+
     d3.json(bound_url, function (err, data) {
       console.log(data)
       var features = data.features;
 
       function renderBoundaries() {
-          console.log("render1")
+          //console.log("render1")
           mapLayer.selectAll('path.map-layer-bound').remove();
           mapLayer.selectAll('path.map-layer-bound')
             .data(features)
             .enter()
             .append('path')
             .classed('map-layer-bound', true)
+            .attr("id", function(d){return "ward"+d.properties.ward})
             .attr('d', path.projection(getD3()))
             .attr('vector-effect', 'non-scaling-stroke')
             .style('stroke', "black")
@@ -109,7 +117,7 @@
             }; 
 
       d3.json(url, function (err, data) {
-        console.log(data)
+        //console.log(data)
         var features = data.features;
         // Define color scale
         var color = d3.scaleOrdinal().domain([d3.range(1, 50, 1)])
@@ -137,10 +145,12 @@
         map.on("viewreset", function () {
  //         render()
           renderBoundaries()
+          colorWard()
         })
         map.on("move", function () {
  //         render()
           renderBoundaries()
+          colorWard()
               }) 
 
             });
@@ -149,7 +159,16 @@
             renderBoundaries()
 
           }); //end of jsonBound function
+    
+    //record clicked ward when the map is moved
+    function colorWard(){
+      for(var ward in clickedLog){
+        d3.select(clickedLog[ward])
+          .classed("clicked",true)
+          .style("fill", clickedColor) 
+      }
 
+    }
 
     // Get province name length
     function nameLength(d) {
@@ -163,30 +182,41 @@
     }
 
     function mouseClick(d) {
-      d3.select(this)
-        .classed("clicked",true)
-        .style("fill","red")
+      var ward = d3.select(this);
+
+      if(ward.classed("clicked")){
+        delete clickedLog[d.properties.ward];
+        ward.classed("clicked",false)
+        ward.style("fill", baseColor)
+      }
+      else{
+        clickedLog[d.properties.ward] = "#ward"+d.properties.ward;
+        ward.classed("clicked",true)
+        ward.style("fill", clickedColor)
+      }
+      
     }
     
     function mouseOut(d) {
-      var c= d3.select(this)
+      var c= d3.select(this); 
       if (c.classed("clicked")){
-        c.style("fill", "red")
+        c.style("fill", clickedColor)
+        
       } else{
         d3.select(this).attr("fill-opacity","0.2") 
-        .style('fill', "lightblue")
+        .style('fill', baseColor)
       }
     }
 
     function mouseOver(d) {
       var c=d3.select(this)
       if (c.classed("clicked")){
-        c.style("fill","darkred")
+        c.style("fill",highlightSelected)
       }
       else{
-      d3.select(this).style("fill","pink");
+      d3.select(this).style("fill", highlightUnselected);
       // Draw effects
-      textArt(nameFn(d));
+      //textArt(nameFn(d));
       }
     }
 

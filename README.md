@@ -1,4 +1,8 @@
-Team Corgi
+#Team Corgi
+Corgi #1
+Corgi #2
+Corgi #3
+Corgi #4
 
 # Run D3 Visualization
 cd D3_Visualization

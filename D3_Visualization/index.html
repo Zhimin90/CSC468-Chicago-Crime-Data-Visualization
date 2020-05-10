@@ -6,8 +6,8 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
   <script src="https://d3js.org/d3-geo.v1.min.js"></script>
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
 
   <style>
     body {
@@ -47,8 +47,115 @@
       zoom: 10.00,
 
     })
+
+    var url = "Crime_2020_points.geojson"
+
+    map.on('load', function () {
+
+      d3.json(url, function (err, data) {
+        map.addSource('crimes', {
+          type: 'geojson',
+          data: data
+        });
+        // add heatmap layer here
+       map.addLayer({
+          id: 'crimes-heat',
+          type: 'heatmap',
+          source: 'crimes',
+ 
+          paint: {
+            // increase weight as diameter breast height increases
+            'heatmap-weight': {
+              property: 'dbh',
+              type: 'exponential',
+              stops: [
+                [1, 0],
+                [62, 1]
+              ]
+            },
+            // increase intensity as zoom level increases
+            'heatmap-intensity': {
+              stops: [
+                [11, 1],
+                [15, 3]
+              ]
+            },
+            // assign color values be applied to points depending on their density
+            'heatmap-color': [
+              'interpolate',
+              ['linear'],
+              ['heatmap-density'],
+              0, 'rgba(236,222,239,0)',
+              0.2, 'rgb(208,209,230)',
+              0.4, 'rgb(166,189,219)',
+              0.6, 'rgb(103,169,207)',
+              0.8, 'rgb(28,144,153)'
+            ],
+            // increase radius as zoom increases
+            'heatmap-radius': {
+              stops: [
+                [11, 15],
+                [15, 20]
+              ]
+            },
+            // decrease opacity to transition into the circle layer
+            'heatmap-opacity': {
+              default: 1,
+              stops: [
+                [14, 1],
+                [15, 0]
+              ]
+            },
+          }
+        }, 'waterway-label');
+        // add circle layer here
+        map.addLayer({
+          id: 'crimes-point',
+          type: 'circle',
+          source: 'crimes',
+          minzoom: 14,
+          paint: {
+            // increase the radius of the circle as the zoom level and dbh value increases
+            'circle-radius': {
+              property: 'dbh',
+              type: 'exponential',
+              stops: [
+                [{ zoom: 15, value: 1 }, 5],
+                [{ zoom: 15, value: 62 }, 10],
+                [{ zoom: 22, value: 1 }, 20],
+                [{ zoom: 22, value: 62 }, 50],
+              ]
+            },
+            'circle-color': {
+              property: 'dbh',
+              type: 'exponential',
+              stops: [
+                [0, 'rgba(236,222,239,0)'],
+                [10, 'rgb(236,222,239)'],
+                [20, 'rgb(208,209,230)'],
+                [30, 'rgb(166,189,219)'],
+                [40, 'rgb(103,169,207)'],
+                [50, 'rgb(28,144,153)'],
+                [60, 'rgb(1,108,89)']
+              ]
+            },
+            'circle-stroke-color': 'white',
+            'circle-stroke-width': 1,
+            'circle-opacity': {
+              stops: [
+                [14, 0],
+                [15, 1]
+              ]
+            }
+          }
+        }, 'waterway-label');
+
+      });
+      });
+
     //map.scrollZoom.disable()
-    map.addControl(new mapboxgl.Navigation());
+    //map.addControl(new mapboxgl.Navigation());
+    map.addControl(new mapboxgl.NavigationControl());
     map.dragRotate.disable();
     map.doubleClickZoom.disable();
 
@@ -82,7 +189,8 @@
 
     var path =  d3.geoPath()
     //var url = "geojson_density_map.json";
-    var url = "Crime_2020_lowres.geojson"
+    //var url = "Crime_2020_lowres.geojson"
+    
     var rasterData = {}
     var bound_url = "Boundaries - Wards (2015-).geojson"
 
@@ -117,13 +225,15 @@
             }; 
 
       d3.json(url, function (err, data) {
-        //console.log(data)
-        var features = data.features;
+        console.log("crime points", data)
+
+        //var features = data.features;
         // Define color scale
-        var color = d3.scaleOrdinal().domain([d3.range(1, 50, 1)])
-        .range(["gold", "blue", "green", "yellow", "black", "grey", "darkgreen", "pink", "brown", "slateblue", "grey1", "orange"])
-      
-        function render() {
+        //var color = d3.scaleOrdinal().domain([d3.range(1, 50, 1)])
+        //.range(["gold", "blue", "green", "yellow", "black", "grey", "darkgreen", "pink", "brown", "slateblue", "grey1", "orange"])
+        
+        //The following was a D3 projection of crime KDE onto mapbox
+        /*function render() {
           // Draw each province as a path
           mapLayer.selectAll('path.map-layer-val').remove();
           mapLayer.selectAll('path')
@@ -135,7 +245,7 @@
             .attr('vector-effect', 'non-scaling-stroke')
             .attr("fill-opacity", function (data, i) { return (data.properties.raster_val/255 * 4 ) })
             .style('fill', function (data, i) { return color(data.properties.ward) })
-        }
+        }*/
 
         
         // renders the rastermap

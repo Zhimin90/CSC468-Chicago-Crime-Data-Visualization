@@ -38,7 +38,6 @@
   <script>
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
-
     //Setup mapbox-gl map
     var map = new mapboxgl.Map({
       container: 'map', // container id
@@ -199,30 +198,17 @@
     var highlightUnselected = "pink"
     var highlightSelected = "darkred"
     var clickedLog = {};
+    var indexSorted = {}
 
     d3.json(bound_url, function (err, data) {
       console.log(data)
       var features = data.features;
 
-      function renderBoundaries() {
-          //console.log("render1")
-          mapLayer.selectAll('path.map-layer-bound').remove();
-          mapLayer.selectAll('path.map-layer-bound')
-            .data(features)
-            .enter()
-            .append('path')
-            .classed('map-layer-bound', true)
-            .attr("id", function(d){return "ward"+d.properties.ward})
-            .attr('d', path.projection(getD3()))
-            .attr('vector-effect', 'non-scaling-stroke')
-            .style('stroke', "black")
-            .attr("fill-opacity","0.2") 
-            .style('fill', "lightblue")
-            .on("mouseover",mouseOver) //turns the grid light pink when you mouse over it
-            .on("mouseout",mouseOut) //when you move mouse out of area, it goes back to normal
-            .on("click",mouseClick) //when you click on area, it turns dark red. 
-              //alert("ward is:" + d.properties.ward)
-            }; 
+      function reRenderBoundaries() {
+          features.forEach(feature => {
+              pathNODES[indexSorted[+feature.properties.ward]].setAttribute("d", path.projection(getD3())(feature))
+          });
+      };
 
       d3.json(url, function (err, data) {
         console.log("crime points", data)
@@ -246,7 +232,6 @@
             .attr("fill-opacity", function (data, i) { return (data.properties.raster_val/255 * 4 ) })
             .style('fill', function (data, i) { return color(data.properties.ward) })
         }*/
-
         
         // renders the rastermap
 //        render()
@@ -254,21 +239,49 @@
         // re-render our visualization whenever the view changes
         map.on("viewreset", function () {
  //         render()
-          renderBoundaries()
+          reRenderBoundaries()
           colorWard()
         })
         map.on("move", function () {
  //         render()
-          renderBoundaries()
+          reRenderBoundaries()
           colorWard()
               }) 
 
             });
 
-            // render our initial visualization
-            renderBoundaries()
+        // render our initial visualization
+        mapLayer.selectAll('path.map-layer-bound')
+          .data(features)
+          .enter()
+          .append('path')
+          .classed('map-layer-bound', true)
+          .attr("id", function (d) { return "ward" + d.properties.ward })
+          .attr('d', path.projection(getD3()))
+          .attr('vector-effect', 'non-scaling-stroke')
+          .style('stroke', "black")
+          .attr("fill-opacity", "0.2")
+          .style('fill', "lightblue")
+          .on("mouseover", mouseOver) //turns the grid light pink when you mouse over it
+          .on("mouseout", mouseOut) //when you move mouse out of area, it goes back to normal
+          .on("click", mouseClick) //when you click on area, it turns dark red. 
+        //alert("ward is:" + d.properties.ward)
 
-          }); //end of jsonBound function
+        //Build index for DOM object from ward to array
+        var wards = document.getElementsByClassName("map-layer-bound")
+        var pathNODES = Array.from(wards)
+        console.log(pathNODES.length)
+        data.features.forEach(feature => {
+          for (i = 0; i < pathNODES.length; i++) {
+            if (feature.properties.ward === /ward([0-9]+)/g.exec(pathNODES[i].id)[1]) {
+              indexSorted[+feature.properties.ward] = i
+            }
+          }
+        });
+
+        reRenderBoundaries()
+
+      }); //end of jsonBound function
     
     //record clicked ward when the map is moved
     function colorWard(){

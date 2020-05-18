@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
   <script src="https://d3js.org/d3-geo.v1.min.js"></script>
@@ -42,7 +45,7 @@
     .map-overlay {
       font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
       position: absolute;
-      width: 50%;
+      width: 400px;
       top: 0;
       left: 0;
       padding: 10px;
@@ -83,42 +86,20 @@
   <div class="map-overlay top">
     <div class="map-overlay-inner">
       <h2>Chicago Crimes in 2020</h2>
-      <label id="month"></label>
-      <input id="slider" type="range" min="0" max="5" step="1" value="0" />
-    </div>
-    <div class="map-overlay-inner">
       <div id="legend" class="legend">
         <div class="bar"></div>
         <div>Density</div>
       </div>
-      <!--<p>
+      <p>
         <label for="amount">Date range:</label>
         <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" size="100" />
-      </p>-->
+      </p>
       <div id="slider-range"></div>
-    </div>
-    
-    
+    </div>    
   </div>
 
   <script>
-    //jQuery script for dual bar slider
-    $(function () {
-        $("#slider-range").slider({
-          range: true,
-          min: new Date('2010.01.01').getTime() / 1000,
-          max: new Date('2014.01.01').getTime() / 1000,
-          step: 12,
-          values: [new Date('2013.01.01').getTime() / 1000, new Date('2013.02.01').getTime() / 1000],
-          slide: function (event, ui) {
-            console.log(ui)
-            $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
-          }
-        });
-
-        $("#amount").val((new Date($("#slider-range").slider("values", 0) * 1000).toDateString()) +
-          " - " + (new Date($("#slider-range").slider("values", 1) * 1000)).toDateString());
-      });
+    
   </script>
 
   <script>
@@ -151,8 +132,8 @@
       ];
 
     //Mapbox crime date filter
-    function filterBy(month) {
-        var filters = ['==', 'month', month];
+    function filterBy(startMonth,endMonth) {
+        var filters = ['all',['>=', 'month', startMonth], ['<=', 'month', endMonth]];
         map.setFilter('crimes-point', filters);
         map.setFilter('crimes-heat', filters);
         map.setFilter('crime-category-labels', filters);
@@ -297,14 +278,27 @@
 
         // Set filter to first month of the year
         // 0 = January
-        filterBy(0);
+        filterBy(0,1);
 
-        document
-          .getElementById('slider')
-          .addEventListener('input', function (e) {
-            var month = parseInt(e.target.value, 10);
-            filterBy(month);
+        //jQuery script for dual bar slider
+        $(function () {
+          $("#slider-range").slider({
+            range: true,
+            min: new Date('2020.01.01').getTime() / 1000,
+            max: new Date('2020.06.01').getTime() / 1000,
+            step: 6,
+            values: [new Date('2020.01.01').getTime() / 1000, new Date('2020.02.01').getTime() / 1000],
+            slide: function (event, ui) {
+              //console.log(ui.values.map((date) => { return new Date(date * 1000).getMonth()}))
+              let dateRange = ui.values.map((date) => { return new Date(date * 1000).getMonth() })
+              filterBy(dateRange[0], dateRange[1])
+              $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+            }
           });
+
+          $("#amount").val((new Date($("#slider-range").slider("values", 0) * 1000).toDateString()) +
+            " - " + (new Date($("#slider-range").slider("values", 1) * 1000)).toDateString());
+        });
 
       });
       });

@@ -14,6 +14,9 @@
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
 
+  <script src="bound.js"></script>
+  <style src="style.css"></style>
+
   <style>
     body {
       margin: 0;
@@ -36,13 +39,7 @@
       height: 100%;
     }
 
-    
-  </style>
-</head>
-
-<body>
-  <style>
-    .map-overlay {
+        .map-overlay {
       font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
       position: absolute;
       width: 400px;
@@ -79,8 +76,11 @@
       margin: 0;
       cursor: ew-resize;
     }
-  </style>
 
+  </style>
+</head>
+
+<body>
   <div id="map"></div>
 
   <div class="map-overlay top">
@@ -99,41 +99,11 @@
   </div>
 
   <script>
-    
-  </script>
-
-  <script>
-
-      
-
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
-    //Setup mapbox-gl map
-    var map = new mapboxgl.Map({
-      container: 'map', // container id
-      style: 'mapbox://styles/mapbox/dark-v10',
-      center: [-87.635, 41.9199],
-      zoom: 10.00,
-
-    })
-
-    var months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
+    var url = "Crime_2020_points.geojson"
 
     //Mapbox crime date filter
-    function filterBy(startMonth,endMonth) {
-        var filters = ['all',['>=', 'month', startMonth], ['<=', 'month', endMonth]];
+      function filterBy(startMonth, endMonth) {
+        var filters = ['all', ['>=', 'month', startMonth], ['<=', 'month', endMonth]];
         map.setFilter('crimes-point', filters);
         map.setFilter('crimes-heat', filters);
         map.setFilter('crime-category-labels', filters);
@@ -141,101 +111,109 @@
         // Set the label to the month
         //document.getElementById('month').textContent = months[month];
       }
+      
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
+      //Setup mapbox-gl map
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/dark-v10',
+        center: [-87.635, 41.9199],
+        zoom: 10.00,
 
-    var url = "Crime_2020_points.geojson"
+      });
+    
+      map.on('load', function () {
+        d3.json(url, function (err, data) {
+          // Create a month property value based on time
+          // used to filter against.
+          data.features = data.features.map(function (d) {
+            d.properties.month = new Date(d.properties.date).getMonth();
+            return d;
+          });
 
-    map.on('load', function () {
-      d3.json(url, function (err, data) {
-        // Create a month property value based on time
-        // used to filter against.
-        data.features = data.features.map(function (d) {
-          d.properties.month = new Date(d.properties.date).getMonth();
-          return d;
-        });
+          console.log(data)
 
-        console.log(data)
+          map.addSource('crimes', {
+            type: 'geojson',
+            data: data
+          });
+          // add heatmap layer here
+          map.addLayer({
+            id: 'crimes-heat',
+            type: 'heatmap',
+            source: 'crimes',
 
-        map.addSource('crimes', {
-          type: 'geojson',
-          data: data
-        });
-        // add heatmap layer here
-       map.addLayer({
-          id: 'crimes-heat',
-          type: 'heatmap',
-          source: 'crimes',
- 
-          paint: {
-            // increase weight as diameter breast height increases
-            'heatmap-weight': {
-              property: 'dbh',
-              type: 'exponential',
-              stops: [
-                [1, 0],
-                [62, 1]
-              ]
-            },
-            // increase intensity as zoom level increases
-            'heatmap-intensity': {
-              stops: [
-                [11, 1],
-                [15, 3]
-              ]
-            },
-            // assign color values be applied to points depending on their density
-            'heatmap-color': [
-              'interpolate',
-              ['linear'],
-              ['heatmap-density'],
-              0,
-              'rgba(33,102,172,0)',
-              0.2,
-              'rgb(103,169,207)',
-              0.4,
-              'rgb(209,229,240)',
-              0.6,
-              'rgb(253,219,199)',
-              0.8,
-              'rgb(239,138,98)',
-              1,
-              'rgb(178,24,43)'
-            ],
-            // increase radius as zoom increases
-            'heatmap-radius': {
-              stops: [
-                [11, 15],
-                [15, 20]
-              ]
-            },
-            // decrease opacity to transition into the circle layer
-            'heatmap-opacity': {
-              default: 1,
-              stops: [
-                [14, 1],
-                [15, 0]
-              ]
-            },
-          }
-        }, 'waterway-label');
-        // add circle layer here
-        map.addLayer({
-          id: 'crimes-point',
-          type: 'circle',
-          source: 'crimes',
-          minzoom: 14,
-          paint: {
-            // increase the radius of the circle as the zoom level and dbh value increases
-            'circle-radius': {
-              property: 'dbh',
-              type: 'exponential',
-              stops: [
-                [{ zoom: 15, value: 1 }, 5],
-                [{ zoom: 15, value: 62 }, 10],
-                [{ zoom: 22, value: 1 }, 20],
-                [{ zoom: 22, value: 62 }, 50],
-              ]
-            },
-            'circle-color': [
+            paint: {
+              // increase weight as diameter breast height increases
+              'heatmap-weight': {
+                property: 'dbh',
+                type: 'exponential',
+                stops: [
+                  [1, 0],
+                  [62, 1]
+                ]
+              },
+              // increase intensity as zoom level increases
+              'heatmap-intensity': {
+                stops: [
+                  [11, 1],
+                  [15, 3]
+                ]
+              },
+              // assign color values be applied to points depending on their density
+              'heatmap-color': [
+                'interpolate',
+                ['linear'],
+                ['heatmap-density'],
+                0,
+                'rgba(33,102,172,0)',
+                0.2,
+                'rgb(103,169,207)',
+                0.4,
+                'rgb(209,229,240)',
+                0.6,
+                'rgb(253,219,199)',
+                0.8,
+                'rgb(239,138,98)',
+                1,
+                'rgb(178,24,43)'
+              ],
+              // increase radius as zoom increases
+              'heatmap-radius': {
+                stops: [
+                  [11, 15],
+                  [15, 20]
+                ]
+              },
+              // decrease opacity to transition into the circle layer
+              'heatmap-opacity': {
+                default: 1,
+                stops: [
+                  [14, 1],
+                  [15, 0]
+                ]
+              },
+            }
+          }, 'waterway-label');
+          // add circle layer here
+          map.addLayer({
+            id: 'crimes-point',
+            type: 'circle',
+            source: 'crimes',
+            minzoom: 14,
+            paint: {
+              // increase the radius of the circle as the zoom level and dbh value increases
+              'circle-radius': {
+                property: 'dbh',
+                type: 'exponential',
+                stops: [
+                  [{ zoom: 15, value: 1 }, 5],
+                  [{ zoom: 15, value: 62 }, 10],
+                  [{ zoom: 22, value: 1 }, 20],
+                  [{ zoom: 22, value: 62 }, 50],
+                ]
+              },
+              'circle-color': [
                 'match',
                 ['get', 'primary_type'],
                 'THEFT',
@@ -248,278 +226,72 @@
                 '#3bb2d0',
                 /* other */ '#ccc'
               ]
-            ,
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1,
-            'circle-opacity': {
-              stops: [
-                [14, 0],
-                [15, 1]
-              ]
+              ,
+              'circle-stroke-color': 'white',
+              'circle-stroke-width': 1,
+              'circle-opacity': {
+                stops: [
+                  [14, 0],
+                  [15, 1]
+                ]
+              }
             }
-          }
-        }, 'waterway-label');
+          }, 'waterway-label');
 
-        map.addLayer({
-          'id': 'crime-category-labels',
-          'type': 'symbol',
-          'source': 'crimes',
-          'layout': {
-            'text-field': ['get', 'primary_type'],
-            'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
-            'text-radial-offset': 0.5,
-            'text-justify': 'auto',
-            'text-size': 12
-          },
-          'paint': {
-            "text-color": "#ffffff"
-          }
-        });
-
-        // Set filter to first month of the year
-        // 0 = January
-        filterBy(0,1);
-
-        //jQuery script for dual bar slider
-        $(function () {
-          $("#slider-range").slider({
-            range: true,
-            min: new Date('2020.01.01').getTime() / 1000,
-            max: new Date('2020.06.01').getTime() / 1000,
-            step: 6,
-            values: [new Date('2020.01.01').getTime() / 1000, new Date('2020.02.01').getTime() / 1000],
-            slide: function (event, ui) {
-              //console.log(ui.values.map((date) => { return new Date(date * 1000).getMonth()}))
-              let dateRange = ui.values.map((date) => { return new Date(date * 1000).getMonth() })
-              filterBy(dateRange[0], dateRange[1])
-              $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+          map.addLayer({
+            'id': 'crime-category-labels',
+            'type': 'symbol',
+            'source': 'crimes',
+            'layout': {
+              'text-field': ['get', 'primary_type'],
+              'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+              'text-radial-offset': 0.5,
+              'text-justify': 'auto',
+              'text-size': 12
+            },
+            'paint': {
+              "text-color": "#ffffff"
             }
           });
 
-          $("#amount").val((new Date($("#slider-range").slider("values", 0) * 1000).toDateString()) +
-            " - " + (new Date($("#slider-range").slider("values", 1) * 1000)).toDateString());
+          // Set filter to first month of the year
+          // 0 = January
+          filterBy(0, 1);
+
+          //jQuery script for dual bar slider
+          $(function () {
+            $("#slider-range").slider({
+              range: true,
+              min: new Date('2020.01.01').getTime() / 1000,
+              max: new Date('2020.06.01').getTime() / 1000,
+              step: 6,
+              values: [new Date('2020.01.01').getTime() / 1000, new Date('2020.02.01').getTime() / 1000],
+              slide: function (event, ui) {
+                //console.log(ui.values.map((date) => { return new Date(date * 1000).getMonth()}))
+                let dateRange = ui.values.map((date) => { return new Date(date * 1000).getMonth() })
+                filterBy(dateRange[0], dateRange[1])
+                $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
+              }
+            });
+
+            $("#amount").val((new Date($("#slider-range").slider("values", 0) * 1000).toDateString()) +
+              " - " + (new Date($("#slider-range").slider("values", 1) * 1000)).toDateString());
+          });
+
         });
-
-      });
       });
 
+
+    
+
+    
     //map.scrollZoom.disable()
     //map.addControl(new mapboxgl.Navigation());
     map.addControl(new mapboxgl.NavigationControl());
     map.dragRotate.disable();
     map.doubleClickZoom.disable();
 
-    // Setup our svg layer that we can manipulate with d3
-    var container = map.getCanvasContainer()
-    var svg = d3.select(container).append("svg")
-
-    // we calculate the scale given mapbox state (derived from viewport-mercator-project's code)
-    // to define a d3 projection
-    function getD3() {
-      var bbox = document.body.getBoundingClientRect();
-      var center = map.getCenter();
-      var zoom = map.getZoom();
-      // 512 is hardcoded tile size, might need to be 256 or changed to suit your map config
-      var scale = (512) * 0.5 / Math.PI * Math.pow(2, zoom);
-      //console.log(center.lng, center.lat)
-      var d3projection = d3.geoMercator()
-        .center([center.lng, center.lat])
-        .translate([bbox.width / 2, bbox.height / 2])
-        .scale(scale);
-
-      return d3projection;
-    }
-    // calculate the original d3 projection
-    //var d3Projection = getD3();
-
-   
-    var g = svg.append('g');
-    var mapLayer = g.append('g')
-      .classed('map-layer', true);
-
-    var path =  d3.geoPath()
-    //var url = "geojson_density_map.json";
-    //var url = "Crime_2020_lowres.geojson"
-    
-    var rasterData = {}
-    //var bound_url = "Boundaries - Wards (2015-).geojson"
-    var bound_url = "ChicagoWards2015+_Compressed.geojson"
-
-    var clickedColor = "red";
-    var baseColor = "lightblue"
-    var highlightUnselected = "pink"
-    var highlightSelected = "darkred"
-    var clickedLog = {};
-    var indexSorted = {}
-
-    d3.json(bound_url, function (err, data) {
-      console.log(data)
-      var features = data.features;
-
-      function reRenderBoundaries() {
-          features.forEach(feature => {
-              pathNODES[indexSorted[+feature.properties.ward]].setAttribute("d", path.projection(getD3())(feature))
-          });
-      };
-
-      d3.json(url, function (err, data) {
-        console.log("crime points", data)
-
-        //var features = data.features;
-        // Define color scale
-        //var color = d3.scaleOrdinal().domain([d3.range(1, 50, 1)])
-        //.range(["gold", "blue", "green", "yellow", "black", "grey", "darkgreen", "pink", "brown", "slateblue", "grey1", "orange"])
-        
-        //The following was a D3 projection of crime KDE onto mapbox
-        /*function render() {
-          // Draw each province as a path
-          mapLayer.selectAll('path.map-layer-val').remove();
-          mapLayer.selectAll('path')
-            .data(features)
-            .enter()
-            .append('path')
-            .classed('map-layer-val', true)
-            .attr('d', path.projection(getD3()))
-            .attr('vector-effect', 'non-scaling-stroke')
-            .attr("fill-opacity", function (data, i) { return (data.properties.raster_val/255 * 4 ) })
-            .style('fill', function (data, i) { return color(data.properties.ward) })
-        }*/
-        
-        // renders the rastermap
-//        render()
-
-        // re-render our visualization whenever the view changes
-        map.on("viewreset", function () {
- //         render()
-          reRenderBoundaries()
-          colorWard()
-        })
-        map.on("move", function () {
- //         render()
-          reRenderBoundaries()
-          colorWard()
-              }) 
-
-            });
-
-        // render our initial visualization
-        mapLayer.selectAll('path.map-layer-bound')
-          .data(features)
-          .enter()
-          .append('path')
-          .classed('map-layer-bound', true)
-          .attr("id", function (d) { return "ward" + d.properties.ward })
-          .attr('d', path.projection(getD3()))
-          .attr('vector-effect', 'non-scaling-stroke')
-          .style('stroke', "black")
-          .attr("fill-opacity", "0.2")
-          .style('fill', "lightblue")
-          .on("mouseover", mouseOver) //turns the grid light pink when you mouse over it
-          .on("mouseout", mouseOut) //when you move mouse out of area, it goes back to normal
-          .on("click", mouseClick) //when you click on area, it turns dark red. 
-        //alert("ward is:" + d.properties.ward)
-
-        //Build index for DOM object from ward to array
-        var wards = document.getElementsByClassName("map-layer-bound")
-        var pathNODES = Array.from(wards)
-        console.log(pathNODES.length)
-        data.features.forEach(feature => {
-          for (i = 0; i < pathNODES.length; i++) {
-            if (feature.properties.ward === /ward([0-9]+)/g.exec(pathNODES[i].id)[1]) {
-              indexSorted[+feature.properties.ward] = i
-            }
-          }
-        });
-
-        reRenderBoundaries()
-
-      }); //end of jsonBound function
-    
-    //record clicked ward when the map is moved
-    function colorWard(){
-      for(var ward in clickedLog){
-        d3.select(clickedLog[ward])
-          .classed("clicked",true)
-          .style("fill", clickedColor) 
-      }
-
-    }
-
-    // Get province name length
-    function nameLength(d) {
-      var n = nameFn(d);
-      return n ? n.length : 0;
-    }
-
-    // Get province color
-    function fillFn(d) {
-      return color(Math.random());
-    }
-
-    function mouseClick(d) {
-      var ward = d3.select(this);
-
-      if(ward.classed("clicked")){
-        delete clickedLog[d.properties.ward];
-        ward.classed("clicked",false)
-        ward.style("fill", baseColor)
-      }
-      else{
-        clickedLog[d.properties.ward] = "#ward"+d.properties.ward;
-        ward.classed("clicked",true)
-        ward.style("fill", clickedColor)
-      }
-      
-    }
-    
-    function mouseOut(d) {
-      var c= d3.select(this); 
-      if (c.classed("clicked")){
-        c.style("fill", clickedColor)
-        
-      } else{
-        d3.select(this).attr("fill-opacity","0.2") 
-        .style('fill', baseColor)
-      }
-    }
-
-    function mouseOver(d) {
-      var c=d3.select(this)
-      if (c.classed("clicked")){
-        c.style("fill",highlightSelected)
-      }
-      else{
-      d3.select(this).style("fill", highlightUnselected);
-      // Draw effects
-      //textArt(nameFn(d));
-      }
-    }
-
-    // When clicked, zoom in
-    function clicked(d) {
-      var x, y, k;
-
-      // Compute centroid of the selected path
-      if (d && centered !== d) {
-        var centroid = path.centroid(d);
-        x = centroid[0];
-        y = centroid[1];
-        k = 4;
-        centered = d;
-      } else {
-        x = width / 2;
-        y = height / 2;
-        k = 1;
-        centered = null;
-      }// Highlight the clicked province
-      mapLayer.selectAll('path')
-        .style('fill', function (d) { return centered && d === centered ? '#D5708B' : fillFn(d); });
-
-      // Zoom
-      g.transition()
-        .duration(750)
-        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
-    } 
+    runD3()
 
   </script>
 </body>

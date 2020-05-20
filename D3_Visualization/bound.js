@@ -2,9 +2,7 @@ function runD3(geojson) {
 
 console.log(geojson)
 
-// Setup our svg layer that we can manipulate with d3
-var container = map.getCanvasContainer()
-var svg = d3.select(container).append("svg")
+
 
 // we calculate the scale given mapbox state (derived from viewport-mercator-project's code)
 // to define a d3 projection
@@ -23,12 +21,6 @@ function getD3() {
     return d3projection;
 }
 
-var g = svg.append('g');
-var mapLayer = g.append('g')
-    .classed('map-layer', true);
-
-var path = d3.geoPath()
-
 var bound_url = "ChicagoWards2015+_Compressed.geojson"
 
 var clickedColor = "red";
@@ -38,21 +30,48 @@ var highlightSelected = "darkred"
 var clickedLog = {};
 var indexSorted = {}
 
+var dispatchSelected = d3.dispatch("selected");
+var dispatchDeselected = d3.dispatch("deselected");
+
 //Fetch Ward Bounds
 d3.json(bound_url, function (err, data) {
     //console.log(data)
-    let wardD3 = new D3WardB(g, data);
+    let wardD3 = new D3WardB(data);
+
+    dispatchSelected
+        .on("selected", function (data) {
+            console.log("Dispatching select...", data)
+            //create svg for crosstab
+            var barSvg = d3.select("body")
+                .append("svg")
+                .classed("crosstabchart",true)
+                .attr("id", "bar")
+                .attr("width", 800)
+                .attr("height", 600)
+            
+            crosstab = Crosstab()
+            crosstab.barchart(barSvg,data)
+        });
+
+    dispatchDeselected
+        .on("deselected", function (data) {
+            console.log("Dispatching deselect...", data)
+        });
 
 }); //end of jsonBound function
 
 /******************Boundary D3 Class**********************************************************/
 
 class D3WardB {
-    constructor(svg, geojson){
-        console.log(svg)
-        console.log(geojson)
-
-        var features = geojson.features;
+    constructor(geojson){
+        // Setup our svg layer that we can manipulate with d3
+        let container = map.getCanvasContainer()
+        let svg = d3.select(container).append("svg")
+        let features = geojson.features;
+        let g = svg.append('g');
+        let mapLayer = g.append('g')
+            .classed('map-layer', true);
+        let path = d3.geoPath()
 
         function reRenderBoundaries() {
             features.forEach(feature => {
@@ -64,13 +83,11 @@ class D3WardB {
         // re-render our visualization whenever the view changes
         //map references to mapbox instance
         map.on("viewreset", function () {
-            //         render()
             reRenderBoundaries()
             colorWard()
         })
 
         map.on("move", function () {
-            //         render()
             reRenderBoundaries()
             colorWard()
         })
@@ -93,8 +110,8 @@ class D3WardB {
         //alert("ward is:" + d.properties.ward)
 
         //Build index for DOM object from ward to array
-        var wards = document.getElementsByClassName("map-layer-bound")
-        var pathNODES = Array.from(wards)
+        let wards = document.getElementsByClassName("map-layer-bound")
+        let pathNODES = Array.from(wards)
         //console.log(pathNODES.length)
         geojson.features.forEach(feature => {
             for (let i = 0; i < pathNODES.length; i++) {
@@ -106,7 +123,6 @@ class D3WardB {
         });
 
         reRenderBoundaries()
-
     }
 }
 
@@ -133,21 +149,7 @@ function fillFn(d) {
     return color(Math.random());
 }
 
-function mouseClick(d) {
-    var ward = d3.select(this);
 
-    if (ward.classed("clicked")) {
-        delete clickedLog[d.properties.ward];
-        ward.classed("clicked", false)
-        ward.style("fill", baseColor)
-    }
-    else {
-        clickedLog[d.properties.ward] = "#ward" + d.properties.ward;
-        ward.classed("clicked", true)
-        ward.style("fill", clickedColor)
-    }
-
-}
 
 function mouseOut(d) {
     var c = d3.select(this);
@@ -172,30 +174,22 @@ function mouseOver(d) {
     }
 }
 
-// When clicked, zoom in
-function clicked(d) {
-    var x, y, k;
+function mouseClick(d) {
+    var ward = d3.select(this);
 
-    // Compute centroid of the selected path
-    if (d && centered !== d) {
-        var centroid = path.centroid(d);
-        x = centroid[0];
-        y = centroid[1];
-        k = 4;
-        centered = d;
-    } else {
-        x = width / 2;
-        y = height / 2;
-        k = 1;
-        centered = null;
-    }// Highlight the clicked province
-    mapLayer.selectAll('path')
-        .style('fill', function (d) { return centered && d === centered ? '#D5708B' : fillFn(d); });
-
-    // Zoom
-    g.transition()
-        .duration(750)
-        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
-} 
+    if (ward.classed("clicked")) {
+        dispatchDeselected.call("deselected", {}, d);
+        delete clickedLog[d.properties.ward];
+        ward.classed("clicked", false)
+        ward.style("fill", baseColor)
+    }
+    else {
+            //console.log("This is: ", this)
+            dispatchSelected.call("selected", {}, d);
+            clickedLog[d.properties.ward] = "#ward" + d.properties.ward;
+            ward.classed("clicked", true)
+            ward.style("fill", clickedColor)
+        }
+    }
 
 }

@@ -1,19 +1,6 @@
-function runD3() {
-    
-var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-];
+function runD3(geojson) {
+
+console.log(geojson)
 
 // Setup our svg layer that we can manipulate with d3
 var container = map.getCanvasContainer()
@@ -36,17 +23,12 @@ function getD3() {
     return d3projection;
 }
 
-
 var g = svg.append('g');
 var mapLayer = g.append('g')
     .classed('map-layer', true);
 
 var path = d3.geoPath()
-//var url = "geojson_density_map.json";
-//var url = "Crime_2020_lowres.geojson"
 
-var rasterData = {}
-//var bound_url = "Boundaries - Wards (2015-).geojson"
 var bound_url = "ChicagoWards2015+_Compressed.geojson"
 
 var clickedColor = "red";
@@ -56,61 +38,79 @@ var highlightSelected = "darkred"
 var clickedLog = {};
 var indexSorted = {}
 
+//Fetch Ward Bounds
 d3.json(bound_url, function (err, data) {
-    console.log(data)
-    var features = data.features;
-
-    function reRenderBoundaries() {
-        features.forEach(feature => {
-            pathNODES[indexSorted[+feature.properties.ward]].setAttribute("d", path.projection(getD3())(feature))
-        });
-    };
-
-    // re-render our visualization whenever the view changes
-    map.on("viewreset", function () {
-        //         render()
-        reRenderBoundaries()
-        colorWard()
-    })
-    map.on("move", function () {
-        //         render()
-        reRenderBoundaries()
-        colorWard()
-    })
-
-
-    // render our initial visualization
-    mapLayer.selectAll('path.map-layer-bound')
-        .data(features)
-        .enter()
-        .append('path')
-        .classed('map-layer-bound', true)
-        .attr("id", function (d) { return "ward" + d.properties.ward })
-        .attr('d', path.projection(getD3()))
-        .attr('vector-effect', 'non-scaling-stroke')
-        .style('stroke', "black")
-        .attr("fill-opacity", "0.2")
-        .style('fill', "lightblue")
-        .on("mouseover", mouseOver) //turns the grid light pink when you mouse over it
-        .on("mouseout", mouseOut) //when you move mouse out of area, it goes back to normal
-        .on("click", mouseClick) //when you click on area, it turns dark red. 
-    //alert("ward is:" + d.properties.ward)
-
-    //Build index for DOM object from ward to array
-    var wards = document.getElementsByClassName("map-layer-bound")
-    var pathNODES = Array.from(wards)
-    console.log(pathNODES.length)
-    data.features.forEach(feature => {
-        for (i = 0; i < pathNODES.length; i++) {
-            if (feature.properties.ward === /ward([0-9]+)/g.exec(pathNODES[i].id)[1]) {
-                indexSorted[+feature.properties.ward] = i
-            }
-        }
-    });
-
-    reRenderBoundaries()
+    //console.log(data)
+    let wardD3 = new D3WardB(g, data);
 
 }); //end of jsonBound function
+
+/******************Boundary D3 Class**********************************************************/
+
+class D3WardB {
+    constructor(svg, geojson){
+        console.log(svg)
+        console.log(geojson)
+
+        var features = geojson.features;
+
+        function reRenderBoundaries() {
+            features.forEach(feature => {
+                pathNODES[indexSorted[+feature.properties.ward]]
+                    .setAttribute("d", path.projection(getD3())(feature))
+            });
+        };
+
+        // re-render our visualization whenever the view changes
+        //map references to mapbox instance
+        map.on("viewreset", function () {
+            //         render()
+            reRenderBoundaries()
+            colorWard()
+        })
+
+        map.on("move", function () {
+            //         render()
+            reRenderBoundaries()
+            colorWard()
+        })
+
+        // render our initial visualization
+        mapLayer.selectAll('path.map-layer-bound')
+            .data(features)
+            .enter()
+            .append('path')
+            .classed('map-layer-bound', true)
+            .attr("id", function (d) { return "ward" + d.properties.ward })
+            .attr('d', path.projection(getD3()))
+            .attr('vector-effect', 'non-scaling-stroke')
+            .style('stroke', "black")
+            .attr("fill-opacity", "0.2")
+            .style('fill', "lightblue")
+            .on("mouseover", mouseOver) //turns the grid light pink when you mouse over it
+            .on("mouseout", mouseOut) //when you move mouse out of area, it goes back to normal
+            .on("click", mouseClick) //when you click on area, it turns dark red. 
+        //alert("ward is:" + d.properties.ward)
+
+        //Build index for DOM object from ward to array
+        var wards = document.getElementsByClassName("map-layer-bound")
+        var pathNODES = Array.from(wards)
+        //console.log(pathNODES.length)
+        geojson.features.forEach(feature => {
+            for (let i = 0; i < pathNODES.length; i++) {
+                //regular expression
+                if (feature.properties.ward === /ward([0-9]+)/g.exec(pathNODES[i].id)[1]) {
+                    indexSorted[+feature.properties.ward] = i
+                }
+            }
+        });
+
+        reRenderBoundaries()
+
+    }
+}
+
+/******************D3 helper functions********************************************************/
 
 //record clicked ward when the map is moved
 function colorWard() {

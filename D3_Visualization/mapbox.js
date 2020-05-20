@@ -1,6 +1,19 @@
-function runMapbox(map) {
+function runMapbox(map,url) {
 
-    var url = "Crime_2020_points.geojson"
+    var months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ];
 
     //Mapbox crime date filter
     function filterBy(startMonth, endMonth) {
@@ -14,7 +27,7 @@ function runMapbox(map) {
     }
 
     map.on('load', function () {
-        console.log("map loaded")
+        console.log("mapbox loaded")
         d3.json(url, function (err, data) {
             // Create a month property value based on time
             // used to filter against.
@@ -23,7 +36,7 @@ function runMapbox(map) {
                 return d;
             });
 
-            console.log(data)
+            //console.log(data)
 
             map.addSource('crimes', {
                 type: 'geojson',

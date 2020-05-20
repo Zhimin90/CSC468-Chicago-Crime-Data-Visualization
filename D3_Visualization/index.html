@@ -42,7 +42,7 @@
       height: 100%;
     }
 
-        .map-overlay {
+    .map-overlay {
       font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
       position: absolute;
       width: 400px;
@@ -80,6 +80,25 @@
       cursor: ew-resize;
     }
 
+    .crosstabchart {
+      float:right;
+      height: 700px;
+      width: 50%;
+    }
+
+    .axisWhite line{
+      stroke: white;
+    }
+
+    .axisWhite path{
+      stroke: white;
+    }
+
+    .axisWhite text{
+      fill: white;
+      font-size: large;
+    }
+
   </style>
 </head>
 
@@ -100,7 +119,7 @@
       <div id="slider-range"></div>
     </div>    
   </div>
-
+  <div class="crosstabchart"></div>
   <script>
     //URL will be axios fetch
     var url = "Crime_2020_points.geojson"

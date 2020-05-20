@@ -32,6 +32,7 @@ var indexSorted = {}
 
 var dispatchSelected = d3.dispatch("selected");
 var dispatchDeselected = d3.dispatch("deselected");
+var selectedWards = {}
 
 //Fetch Ward Bounds
 d3.json(bound_url, function (err, data) {
@@ -41,8 +42,19 @@ d3.json(bound_url, function (err, data) {
     dispatchSelected
         .on("selected", function (data) {
             console.log("Dispatching select...", data)
+            //Aggregate Selected Wards Data
+            let clickedWard = geojson.features.filter(val => val.properties.ward === data.properties.ward)
+            //console.log(clickedWard )
+            selectedWards[data.properties.ward] = clickedWard
+            //console.log(selectedWards)
+
+            let selectedValues = Object.keys(selectedWards).map(function (key) {
+                return selectedWards[key];
+            });
+
             //create svg for crosstab
-            var barSvg = d3.select("body")
+            d3.select("svg.crosstabchart").remove()
+            var barSvg = d3.select("body").select("div.crosstabchart")
                 .append("svg")
                 .classed("crosstabchart",true)
                 .attr("id", "bar")
@@ -50,12 +62,33 @@ d3.json(bound_url, function (err, data) {
                 .attr("height", 600)
             
             crosstab = Crosstab()
-            crosstab.barchart(barSvg,data)
+            crosstab.barchart(barSvg,selectedValues.flat())
+
         });
+
 
     dispatchDeselected
         .on("deselected", function (data) {
             console.log("Dispatching deselect...", data)
+
+            delete selectedWards[data.properties.ward]
+
+            let selectedValues = Object.keys(selectedWards).map(function (key) {
+                return selectedWards[key];
+            });
+
+            //create svg for crosstab
+            d3.select("svg.crosstabchart").remove()
+            var barSvg = d3.select("body").select("div.crosstabchart")
+                .append("svg")
+                .classed("crosstabchart", true)
+                .attr("id", "bar")
+                .attr("width", 800)
+                .attr("height", 600)
+
+            crosstab = Crosstab()
+            crosstab.barchart(barSvg, selectedValues.flat())
+
         });
 
 }); //end of jsonBound function

@@ -1,4 +1,5 @@
 function runD3() {
+    
 var months = [
     'January',
     'February',
@@ -13,10 +14,6 @@ var months = [
     'November',
     'December'
 ];
-
-
-
-var url = "Crime_2020_points.geojson"
 
 // Setup our svg layer that we can manipulate with d3
 var container = map.getCanvasContainer()

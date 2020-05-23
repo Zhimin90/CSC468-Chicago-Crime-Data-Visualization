@@ -11,12 +11,17 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
   <script src="https://d3js.org/d3-geo.v1.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
 
   <script src="mapbox.js"></script>
   <script src="crosstabbars.js"></script>
+  <script src="linechart.js"></script>
   <script src="bound.js"></script>
+ 
+  <script src=" 5_OneCatSevNumOrdered.csv.js"></script>
+  <script src="connectedscatter.csv.js"></script>
   
   <style src="style.css"></style>
 
@@ -99,6 +104,11 @@
       font-size: large;
     }
 
+    .linechart{
+      float:right;
+ 
+    }
+
   </style>
 </head>
 
@@ -120,6 +130,7 @@
     </div>    
   </div>
   <div class="crosstabchart"></div>
+  <div class="linechart"></div>
   <script>
     //URL will be axios fetch
     var url = "Crime_2020_points.geojson"
@@ -135,7 +146,7 @@
     });
     
     //Load from mapbox.js
-    runMapbox(map,url);
+   // runMapbox(map,url);
 
     //fetch geojson data
     d3.json(url, function (err, data) {

@@ -23,7 +23,7 @@ function getD3() {
 
 var bound_url = "ChicagoWards2015+_Compressed.geojson"
 
-var clickedColor = "red";
+var clickedColor = "yellow";
 var baseColor = "lightblue"
 var highlightUnselected = "pink"
 var highlightSelected = "darkred"
@@ -44,9 +44,9 @@ d3.json(bound_url, function (err, data) {
             console.log("Dispatching select...", data)
             //Aggregate Selected Wards Data
             let clickedWard = geojson.features.filter(val => val.properties.ward === data.properties.ward)
-            //console.log(clickedWard )
+            // console.log(clickedWard )
             selectedWards[data.properties.ward] = clickedWard
-            //console.log(selectedWards)
+            console.log(selectedWards)
 
             let selectedValues = Object.keys(selectedWards).map(function (key) {
                 return selectedWards[key];
@@ -60,10 +60,22 @@ d3.json(bound_url, function (err, data) {
                 .attr("id", "bar")
                 .attr("width", 800)
                 .attr("height", 600)
-            
+                         
             crosstab = Crosstab()
             crosstab.barchart(barSvg,selectedValues.flat())
 
+            d3.select("svg.linechart").remove()
+            var lineSvg = d3.select("body").select("div.linechart")
+                .append("svg")
+                .classed("linechart", true)
+                .attr("id", "line")
+                .attr("width",690)
+                .attr("height", 600)
+
+            linegraph = Linechart();
+            linegraph.drawChart(lineSvg,selectedValues.flat());
+            
+            
         });
 
 
@@ -89,6 +101,16 @@ d3.json(bound_url, function (err, data) {
             crosstab = Crosstab()
             crosstab.barchart(barSvg, selectedValues.flat())
 
+            d3.select("svg.linechart").remove()
+            var lineSvg = d3.select("body").select("div.linechart")
+                .append("svg")
+                .classed("linechart", true)
+                .attr("id", "line")
+                .attr("width",690)
+                .attr("height", 600)
+
+            linegraph = Linechart();
+            linegraph.drawChart(lineSvg,selectedValues.flat());
         });
 
 }); //end of jsonBound function
@@ -211,10 +233,11 @@ function mouseClick(d) {
     var ward = d3.select(this);
 
     if (ward.classed("clicked")) {
-        dispatchDeselected.call("deselected", {}, d);
+        // dispatchDeselected.call("deselected", {}, d);
         delete clickedLog[d.properties.ward];
         ward.classed("clicked", false)
         ward.style("fill", baseColor)
+        dispatchDeselected.call("deselected", {}, d);
     }
     else {
             //console.log("This is: ", this)

@@ -167,23 +167,30 @@
   <div class="crosstabchart"></div>
   <script>
     //URL will be axios fetch
-    var url = "Crime_2020_points.geojson"
-    
+    var url = "crimes"
+
     mapboxgl.accessToken = 'pk.eyJ1IjoiZW5qYWxvdCIsImEiOiJjaWhtdmxhNTIwb25zdHBsejk0NGdhODJhIn0.2-F2hS_oTZenAWc0BMf_uw'
     
     //Setup mapbox-gl map
-    var map = new mapboxgl.Map({
+      var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/dark-v10',
         center: [-87.635, 41.9199],
         zoom: 10.00,
-    });
+      });
     
-    //Load from mapbox.js
-    runMapbox(map,url);
-
     //fetch geojson data
     d3.json(url, function (err, data) {
+      // Create a month property value based on time
+      // used to filter against.
+        data.features = data.features.map(function (d) {
+        d.properties.month = new Date(d.properties.date).getMonth();
+        return d;
+      });
+
+      //Load from mapbox.js
+      runMapbox(map, data);
+
       //load from bound.js
       runD3(data);
     });

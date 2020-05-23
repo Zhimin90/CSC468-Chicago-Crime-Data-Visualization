@@ -1,6 +1,6 @@
 function runD3(geojson) {
 
-console.log(geojson)
+//console.log(geojson)
 
 
 
@@ -21,7 +21,7 @@ function getD3() {
     return d3projection;
 }
 
-var bound_url = "ChicagoWards2015+_Compressed.geojson"
+var bound_url = "wards"
 
 var clickedColor = "red";
 var baseColor = "lightblue"

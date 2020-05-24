@@ -88,6 +88,13 @@
       width: 50%;
     }
 
+    .linechart {
+      float:right;
+      clear:right;
+      width: 50%;      
+    }
+
+
     .axisWhite line{
       stroke: white;
     }
@@ -100,6 +107,7 @@
       fill: white;
       font-size: large;
     }
+
 
 
     /* below are for the toggle on off buttons */
@@ -168,8 +176,11 @@
       <div id="slider-range"></div>
     </div>    
   </div>
+  
   <div class="crosstabchart"></div>
+  
   <div class="linechart"></div>
+
   <script>
     //URL will be axios fetch
     var url = "crimes"

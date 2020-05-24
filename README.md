@@ -1,20 +1,21 @@
-#Team Corgi
-Corgi #1
-Corgi #2
-Corgi #3
-Corgi #4
+# Team Corgi
++ ##### Zhimin Zou
++ ##### Hailiang Wang
++ ##### Allan Guan
++ ##### Khoa Nguyen
+***
 
 # Install and Run Flask Server
 in root directory where server.py is
 
-pip install Flask
-pip install sodapy
-pip install geopandas
+pip install Flask  
+pip install sodapy  
+pip install geopandas  
 
-Windows
-set FLASK_APP=server.py
-or Linux
-export FLASK_APP=server.py
+### Windows
+set FLASK_APP=server.py  
+### Linux
+export FLASK_APP=server.py  
 
 python -m flask run
 

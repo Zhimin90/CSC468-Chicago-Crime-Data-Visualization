@@ -38,6 +38,7 @@
       height: 100%;
     }
 
+
     svg {
       position: absolute;
       width: 100%;
@@ -82,16 +83,30 @@
       cursor: ew-resize;
     }
 
+    .chartpanel {
+      font: 12px/16px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      position: absolute;
+      width: 300px;
+      top: 0;
+      right: 0;
+      padding: 5px;
+      float:right;
+      height: 100%;
+      width: 50%;
+      background-color: lightgrey;
+    }
+
     .crosstabchart {
       float:right;
       height: 700px;
-      width: 50%;
+      width: 100%;
     }
 
     .linechart {
       float:right;
       clear:right;
-      width: 50%;      
+      height: 700px;
+      width: 100%;      
     }
 
 
@@ -161,6 +176,11 @@
 <body>
   <div id="map"></div>
   <nav id="menu"></nav>
+  
+  <div class="chartpanel">
+    <div class="crosstabchart"></div>
+    <div class="linechart"></div>
+  </div>
 
   <div class="map-overlay top">
     <div class="map-overlay-inner">
@@ -177,10 +197,6 @@
     </div>    
   </div>
   
-  <div class="crosstabchart"></div>
-  
-  <div class="linechart"></div>
-
   <script>
     //URL will be axios fetch
     var url = "crimes"
@@ -191,7 +207,7 @@
       var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/dark-v10',
-        center: [-87.635, 41.9199],
+        center: [-87.4714, 41.8317],
         zoom: 10.00,
       });
     

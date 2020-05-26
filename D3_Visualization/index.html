@@ -32,6 +32,17 @@
       left: 0;
     }
 
+    #loading {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      font: 40px 'Helvetica Neue';
+      text-align:center;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: lightgrey;
+    }
+
     #map {
       position: absolute;
       width: 100%;
@@ -98,7 +109,7 @@
 
     .crosstabchart {
       float:right;
-      height: 700px;
+      height: 600px;
       width: 100%;
       padding: 10px;
     }
@@ -106,7 +117,7 @@
     .linechart {
       float:right;
       clear:right;
-      height: 700px;
+      height: 600px;
       width: 100%;
       padding: 10px;      
     }
@@ -176,14 +187,16 @@
 </head>
 
 <body>
+  <div id="loading">Loading Crime Data Please Wait.......</div>
   <div id="map"></div>
   <nav id="menu"></nav>
-  
+  <!--
+  //Removed. Created by D3 instead
   <div class="chartpanel">
     <div class="crosstabchart"></div>
     <div class="linechart"></div>
   </div>
-
+  -->
   <div class="map-overlay top">
     <div class="map-overlay-inner">
       <h2>Chicago Crimes in 2020</h2>
@@ -218,13 +231,27 @@
     d3.json(url, function (err, data) {
       // Create a month property value based on time
       // used to filter against.
-        data.features = data.features.map(function (d) {
+      data.features = data.features.map(function (d) {
         d.properties.month = new Date(d.properties.date).getMonth();
         return d;
       });
 
       //Load from mapbox.js
       runMapbox(map, data);
+
+      //Remove Loading screen and add div boxes for charts
+      d3.select("#loading").remove()
+      d3.select('body')
+        .append('div')
+        .attr('class', 'chartpanel')
+      
+      d3.select('div.chartpanel')
+        .append('div')
+        .attr('class', 'crosstabchart')
+
+      d3.select('div.chartpanel')
+        .append('div')
+        .attr('class', 'linechart')
 
       //load from bound.js
       runD3(data);

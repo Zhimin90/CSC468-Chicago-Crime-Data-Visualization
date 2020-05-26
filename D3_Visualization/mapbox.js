@@ -45,7 +45,7 @@ function runMapbox(map,crimeData) {
                 type: 'exponential',
                 stops: [
                     [1, 0],
-                    [62, 1]
+                    [62/2, 1]
                 ]
             },
             // increase intensity as zoom level increases
@@ -76,8 +76,8 @@ function runMapbox(map,crimeData) {
             // increase radius as zoom increases
             'heatmap-radius': {
                 stops: [
-                    [11, 15],
-                    [15, 20]
+                    [11/6, 15/6],
+                    [15/6, 20/6]
                 ]
             },
             // decrease opacity to transition into the circle layer

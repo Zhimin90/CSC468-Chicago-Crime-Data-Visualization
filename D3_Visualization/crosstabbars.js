@@ -23,6 +23,31 @@ var Crosstab = function () {
 
             groupKey = "key"
 
+            legend = svg => {
+                const g = svg
+                    .attr("transform", `translate(${width},0)`)
+                    .attr("text-anchor", "end")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", 10)
+                    .selectAll("g")
+                    .data(color.domain().slice().reverse())
+                    .enter()
+                    .append("g")
+                    .attr("transform", (d, i) => `translate(0,${i * 20})`);
+
+                g.append("rect")
+                    .attr("x", -19)
+                    .attr("width", 19)
+                    .attr("height", 19)
+                    .attr("fill", color);
+
+                g.append("text")
+                    .attr("x", -24)
+                    .attr("y", 9.5)
+                    .attr("dy", "0.35em")
+                    .text(d => d);
+            }
+
             x0 = d3.scaleBand()
                 .domain(data.map(d => d[groupKey]))
                 .rangeRound([margin.left, width - margin.right])
@@ -80,10 +105,10 @@ var Crosstab = function () {
             
             svg.append("g")
                 .call(yAxis);
-            /*
+            
             svg.append("g")
                 .call(legend);
-            */
+            
             console.log("ended")
             //return svg.node();
         }

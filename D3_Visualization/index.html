@@ -248,10 +248,12 @@
       d3.select('div.chartpanel')
         .append('div')
         .attr('class', 'crosstabchart')
+        .attr('id', 'ctcdivid')
 
       d3.select('div.chartpanel')
         .append('div')
         .attr('class', 'linechart')
+        .attr('id', 'lcdivid')
 
       //load from bound.js
       runD3(data);

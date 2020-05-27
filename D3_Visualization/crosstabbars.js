@@ -98,7 +98,10 @@ var Crosstab = function () {
                 .attr("y", d => y(d.value))
                 .attr("width", x1.bandwidth())
                 .attr("height", d => y(0) - y(d.value))
-                .attr("fill", d => color(d.key));
+                .attr("fill", d => color(d.key))
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave);
             
             svg.append("g")
                 .call(xAxis);
@@ -115,6 +118,44 @@ var Crosstab = function () {
     }
     
 
+//-------------Tooltip----------------------
+    var Tooltip = d3.select("#lcdivid")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    .style("background-color", "lightgrey")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+                    .style("position", "absolute")
+                    
+
+    function mouseover(){
+        Tooltip
+          .style("opacity", 0.8)
+        d3.select(this)
+          .style("stroke", "yellow")
+          .attr("stroke-width", 5)
+          .style("opacity", 1)
+      }
+
+    function mousemove(d){
+        Tooltip
+          .html("Value: " + d.key) 
+          .html("<h3>" + d.key + ": " + d.value + "</h3>") 
+          .style("left", (d3.mouse(this)[0]+100) + "px")
+          .style("top", (d3.mouse(this)[1]-100) + "px")
+      }
+
+    function mouseleave(){
+        Tooltip
+          .style("opacity", 0)
+        d3.select(this)
+          .style("stroke", "none")
+          
+      }
+//-------------Tooltip----------------------
 
 
 //This function takes in flat data 

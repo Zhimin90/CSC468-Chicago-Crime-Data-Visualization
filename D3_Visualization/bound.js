@@ -68,7 +68,7 @@ d3.json(bound_url, function (err, data) {
             var lineSvg = d3.select("body").select("div.linechart")
                 .append("svg")
                 .classed("linechart", true)
-                .attr("id", "line")
+                .attr("id", "linesvg")
                 .attr("width",690)
                 .attr("height", 600)
 
@@ -121,6 +121,8 @@ class D3WardB {
     constructor(geojson){
         // Setup our svg layer that we can manipulate with d3
         let container = map.getCanvasContainer()
+        // d3.select(container).append("div").attr("id", "maplayerid").classed("tooltip", true)
+        
         let svg = d3.select(container).append("svg")
         let features = geojson.features;
         let g = svg.append('g');
@@ -159,10 +161,10 @@ class D3WardB {
             .style('stroke', "black")
             .attr("fill-opacity", "0.2")
             .style('fill', "lightblue")
-            .on("mouseover", mouseOver) //turns the grid light pink when you mouse over it
-            .on("mouseout", mouseOut) //when you move mouse out of area, it goes back to normal
-            .on("click", mouseClick) //when you click on area, it turns dark red. 
-        //alert("ward is:" + d.properties.ward)
+            .on("mouseover", mouseOver) 
+            .on("mouseout", mouseOut) 
+            .on("click", mouseClick) 
+            .on("mousemove", mousemove)                                
 
         //Build index for DOM object from ward to array
         let wards = document.getElementsByClassName("map-layer-bound")
@@ -204,20 +206,52 @@ function fillFn(d) {
     return color(Math.random());
 }
 
+var Tooltip = d3.select("body")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "lightgrey")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    .style("position", "absolute")
 
 
-function mouseOut(d) {
-    var c = d3.select(this);
-    if (c.classed("clicked")) {
-        c.style("fill", clickedColor)
+    function mousemove(d){
+        Tooltip
+          .html("<h3>Ward: " + d.properties.ward + "</h3>")
+          .style("left", (d3.mouse(this)[0]+50) + "px")
+          .style("top", (d3.mouse(this)[1]) + "px")
+      }
 
-    } else {
-        d3.select(this).attr("fill-opacity", "0.2")
-            .style('fill', baseColor)
+    function mouseOut(d) {
+        Tooltip
+        .style("opacity", 0)
+      d3.select(this)
+        .style('stroke', "black")
+        .attr("stroke-width", 1)
+        
+
+        var c = d3.select(this);
+        if (c.classed("clicked")) {
+            c.style("fill", clickedColor)
+
+        } else {
+            d3.select(this).attr("fill-opacity", "0.2")
+                .style('fill', baseColor)
+        }
     }
-}
 
 function mouseOver(d) {
+    Tooltip
+    .style("opacity", 0.7)
+  d3.select(this)
+    .style("stroke", "yellow")
+    .attr("stroke-width", 5)
+    .style("opacity", 1)
+
+
     var c = d3.select(this)
     if (c.classed("clicked")) {
         c.style("fill", highlightSelected)

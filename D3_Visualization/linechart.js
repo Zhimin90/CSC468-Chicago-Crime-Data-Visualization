@@ -13,23 +13,6 @@ var Linechart = function(){
           var myColor = d3.scaleSequential().domain([1,50])
                            .interpolator(d3.interpolateTurbo);
 
-          var Tooltip = d3.select("#my_dataviz")
-                           .append("div")
-                           .style("opacity", 0)
-                           .attr("class", "tooltip")
-                           .style("background-color", "white")
-                           .style("border", "solid")
-                           .style("border-width", "2px")
-                           .style("border-radius", "5px")
-                           .style("padding", "5px")
-
-          var mouseover = function(d) {
-                            Tooltip
-                              .html("text here ", 1)
-                              .style("left", (d3.mouse(this)[0]+70) + "px")
-                              .style("top", (d3.mouse(this)[1]) + "px")
-                          }
-
           var x = d3.scaleTime()
                     .domain([new Date("01"), maxMonth])
                     .range([ 0, width ]);
@@ -55,17 +38,61 @@ var Linechart = function(){
           wardGroup.forEach(function(da) {
               svg.append("path")
               .data([da.data])  
+              .attr("id", da.key)
               .attr("fill", "none")
               .attr("stroke", myColor(da.key))
-              .attr("stroke-width", 1.5)
+              .attr("stroke-width", 3.5)
               .attr("d", d3.line()
                 .x(function(d) { return x(d.date) })
                 .y(function(d) { return y(d.value) })
                 )
               .on("mouseover", mouseover)
+              .on("mousemove", mousemove)
+              .on("mouseleave", mouseleave)
             }) 
+
         }//drawChart
     }//chart
+
+    
+    var Tooltip = d3.select("#lcdivid")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    .style("background-color", "lightgrey")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+                    .style("position", "absolute")
+
+    function mouseover(){
+        Tooltip
+          .style("opacity", 0.8)
+        d3.select(this)
+          .style("stroke-width", 8)
+          .style("opacity", 1)
+      }
+
+    function mousemove(d){
+
+        var ward = d3.select(this).attr("id")
+        Tooltip
+          .html("<h1>Ward: " + d3.select(this).attr("id") + "</h1>" + getToolTipInfo(d)) //getToolTipInfo(d)
+          .style("left", (d3.mouse(this)[0]+70) + "px")
+          .style("top", (d3.mouse(this)[1]+420) + "px")
+      }
+
+    function mouseleave(){
+        Tooltip
+          .style("opacity", 0)
+        d3.select(this)
+        .style("stroke-width", 3.5)
+          .style("opacity", 1)
+      }
+
+
+
 
     function parseWard(svgdata){
       var wardData = [];
@@ -102,7 +129,6 @@ var Linechart = function(){
 
     function findMaxMonth(wardGroup){
       var max = new Date("01");
-      console.log(wardGroup)
       for(ward of wardGroup){
         for(w of ward.data){
           if(w.date > max){
@@ -112,6 +138,18 @@ var Linechart = function(){
       }
       return max;
     }//findMaxMonth
+
+    function getToolTipInfo(ward){
+      // console.log("-----gettoo tip")
+      // console.log(d3.select(this).attr('id'))
+      sortedWard = ward.slice().sort((a,b) => d3.ascending(a.date, b.date));
+      var rts = "";
+      for(w of sortedWard){
+        rts = rts + "<h3 style=text-align:center;>" + d3.timeFormat("%b")(w.date) + ": " + w.value + "</h3>";
+      }
+
+      return rts;
+    }//getToolTipInfo
 
     return chart;
 }

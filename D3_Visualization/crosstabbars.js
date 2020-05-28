@@ -3,6 +3,10 @@
 var Crosstab = function () {
     var chart = {
         barchart: function (svg, data) {
+            if (data.length === 0) {
+                return
+            }
+
             groupKey1 = "ward"
             groupKey2 = "primary_type"
 

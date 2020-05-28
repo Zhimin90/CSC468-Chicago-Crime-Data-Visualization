@@ -172,6 +172,20 @@ function runMapbox(map,crimeData) {
         $("#amount").val((new Date($("#slider-range").slider("values", 0) * 1000).toDateString()) +
             " - " + (new Date($("#slider-range").slider("values", 1) * 1000)).toDateString());
     });
+    
+    //AutoPlay, set timer for 5 seconds recursively in a non-blocking function
+    function loopUntilDone(i) {
+        setTimeout( ()=>{
+            //console.log('i: ', i)
+            if (AutoPlay){
+                $("#amount").val(months[(0 + i) % 6] + " - " + months[(1 + i) % 6]);
+                filterBy((0 + i) % 6, (1 + i) % 6);
+            }
+            loopUntilDone(i + 1);
+        },5000)
+    }
+
+    loopUntilDone(0) 
 
     //map.scrollZoom.disable()
     //map.addControl(new mapboxgl.Navigation());
@@ -214,4 +228,16 @@ function runMapbox(map,crimeData) {
     } 
 
 
+}
+
+var AutoPlay = true
+
+var AutoFunc = function toggleAutoPlay() {
+    console.log("in AutoFunc")
+    if (AutoPlay === true) {
+        AutoPlay = false;
+    } else {
+        AutoPlay = true;
+    }
+    
 }

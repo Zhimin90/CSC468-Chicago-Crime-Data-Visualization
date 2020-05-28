@@ -59,7 +59,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart",true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", 600)
+                .attr("height", 400)
                          
             crosstab = Crosstab()
             crosstab.barchart(barSvg,selectedValues.flat())
@@ -70,7 +70,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "linesvg")
                 .attr("width",690)
-                .attr("height", 600)
+                .attr("height", 400)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
@@ -96,7 +96,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart", true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", 600)
+                .attr("height", 400)
 
             crosstab = Crosstab()
             crosstab.barchart(barSvg, selectedValues.flat())
@@ -107,7 +107,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "line")
                 .attr("width",690)
-                .attr("height", 600)
+                .attr("height", 400)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());

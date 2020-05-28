@@ -3,6 +3,10 @@
 var Crosstab = function () {
     var chart = {
         barchart: function (svg, data) {
+            if (data.length === 0) {
+                return
+            }
+
             groupKey1 = "ward"
             groupKey2 = "primary_type"
 
@@ -25,6 +29,7 @@ var Crosstab = function () {
 
             legend = svg => {
                 const g = svg
+                    .attr("class", "axisWhite")
                     .attr("transform", `translate(${width},0)`)
                     .attr("text-anchor", "end")
                     .attr("font-family", "sans-serif")
@@ -69,20 +74,34 @@ var Crosstab = function () {
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .attr("class", "axisWhite")
                 .call(d3.axisBottom(x0).tickSizeOuter(0))
-                .call(g => g.select(".domain").remove())
+                //.call(g => g.select(".domain").remove())
 
             yAxis = g => g
                 .attr("transform", `translate(${margin.left},0)`)
                 .attr("class", "axisWhite")
                 .call(d3.axisLeft(y).ticks(null, "s"))
-                .call(g => g.select(".domain").remove())
+                //.call(g => g.select(".domain").remove())
                 .call(g => g.select(".tick:last-of-type text").clone()
                     .attr("x", 3)
                     .attr("text-anchor", "start")
                     .attr("font-weight", "bold")
                     .text(data.y))
 
-            
+            // gridlines in y axis function
+            function make_y_gridlines() {
+                return d3.axisLeft(y)
+                    .ticks(5)
+            }
+
+            // add the Y gridlines
+            svg.append("g")
+                .attr("transform", `translate(${margin.left},0)`)
+                .attr("class", "axisWhite")
+                .style("opacity", 0.3)
+                .call(make_y_gridlines()
+                    .tickSize(-width)
+                    .tickFormat("")
+                )
             
             svg.append("g")
                 .selectAll("g")
@@ -111,6 +130,8 @@ var Crosstab = function () {
             
             svg.append("g")
                 .call(legend);
+            
+            
             
             console.log("ended")
             //return svg.node();
@@ -165,7 +186,7 @@ function groupBy(data, key1, key2) {
     uniqueKey1s = getUnique(data, key1)
     uniqueKey2s = getUnique(data, key2)
 
-    dict = uniqueKey1s.map(val=> {return({"key": val})})
+    dict = uniqueKey1s.map(val => { return ({ "key": val})})
     //console.log(dict)
 
     index = 0

@@ -29,6 +29,7 @@ var Crosstab = function () {
 
             legend = svg => {
                 const g = svg
+                    .attr("class", "axisWhite")
                     .attr("transform", `translate(${width},0)`)
                     .attr("text-anchor", "end")
                     .attr("font-family", "sans-serif")

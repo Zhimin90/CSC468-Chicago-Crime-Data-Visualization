@@ -187,6 +187,8 @@ class D3WardB {
 
 //record clicked ward when the map is moved
 function colorWard() {
+
+    
     for (var ward in clickedLog) {
         d3.select(clickedLog[ward])
             .classed("clicked", true)
@@ -280,6 +282,26 @@ function mouseClick(d) {
             ward.classed("clicked", true)
             ward.style("fill", clickedColor)
         }
+
+    // Only show panel if there are a chart, hide if no chart
+    var panel = document.getElementById("chartpanelid")
+    if(Object.keys(clickedLog).length != 0){
+        panel.style.display = "block";
+    } else if(Object.keys(clickedLog).length == 0){
+        panel.style.display = "none";
     }
+    
+
+    }
+
+
+    // function hidePanel(){
+    //     var panel = document.getElementById("chartpanelid")
+    //     if (panel.style.display === "none") {
+    //         panel.style.display = "block";
+    //       } else {
+    //         panel.style.display = "none";
+    //       }
+    // }
 
 }

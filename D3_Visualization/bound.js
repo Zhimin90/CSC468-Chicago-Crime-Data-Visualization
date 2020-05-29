@@ -69,7 +69,7 @@ d3.json(bound_url, function (err, data) {
                 .append("svg")
                 .classed("linechart", true)
                 .attr("id", "linesvg")
-                .attr("width",690)
+                .attr("width",800)
                 .attr("height", 400)
 
             linegraph = Linechart();
@@ -106,7 +106,7 @@ d3.json(bound_url, function (err, data) {
                 .append("svg")
                 .classed("linechart", true)
                 .attr("id", "line")
-                .attr("width",690)
+                .attr("width",800)
                 .attr("height", 400)
 
             linegraph = Linechart();

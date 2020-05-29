@@ -140,7 +140,8 @@ var Crosstab = function () {
     
 
 //-------------Tooltip----------------------
-    var Tooltip = d3.select("#lcdivid")
+    // var Tooltip = d3.select("#lcdivid")
+    var Tooltip = d3.select("body")
                     .append("div")
                     .style("opacity", 0)
                     .attr("class", "tooltip")
@@ -165,7 +166,7 @@ var Crosstab = function () {
         Tooltip
           .html("Value: " + d.key) 
           .html("<h3>" + d.key + ": " + d.value + "</h3>") 
-          .style("left", (d3.mouse(this)[0]+100) + "px")
+          .style("left", (d3.mouse(this)[0]+750) + "px")
           .style("top", (d3.mouse(this)[1]-100) + "px")
       }
 

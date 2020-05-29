@@ -24,6 +24,8 @@
   <script src="crosstabbars.js"></script>
   <script src="linechart.js"></script>
   <script src="bound.js"></script>
+  <script src="radialchart.js"></script>
+
    
   <style src="style.css"></style>
 
@@ -114,15 +116,23 @@
 
     .crosstabchart {
       float:right;
-      height: 400px;
+      height: 410px;
       width: 100%;
-      padding: 10px;
+      padding: 5px;
     }
 
     .linechart {
       float:right;
       clear:right;
-      height: 400px;
+      height: 300px;
+      width: 100%;
+      padding: 5px;      
+    }
+
+    .radialchart {
+      float:right;
+      clear:right;
+      height: 500px;
       width: 100%;
       padding: 10px;      
     }
@@ -278,6 +288,11 @@
         .append('div')
         .attr('class', 'linechart')
         .attr('id', 'lcdivid')
+
+      d3.select('div.chartpanel')
+        .append('div')
+        .attr('class', 'radialchart')
+        .attr('id', 'rcdivid')
 
       //load from bound.js
       runD3(data);

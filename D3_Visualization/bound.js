@@ -59,7 +59,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart",true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", 400)
+                .attr("height", 395)
                          
             crosstab = Crosstab()
             crosstab.barchart(barSvg,selectedValues.flat())
@@ -70,11 +70,20 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "linesvg")
                 .attr("width",800)
-                .attr("height", 400)
+                .attr("height", 290)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
             
+            d3.select("svg.radialchart").remove()
+            var radialSvg = d3.select("body").select("div.radialchart")
+            .append("svg")
+            .classed("radialchart",true)
+            .attr("width",690)
+            .attr("height",475)
+            
+            radialgraph=Radialchart()
+            radialgraph.drawRadialChart(radialSvg,selectedValues.flat())
             
         });
 
@@ -96,7 +105,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart", true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", 400)
+                .attr("height", 395)
 
             crosstab = Crosstab()
             crosstab.barchart(barSvg, selectedValues.flat())
@@ -107,10 +116,20 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "line")
                 .attr("width",800)
-                .attr("height", 400)
+                .attr("height", 290)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
+
+            d3.select("svg.radialchart").remove()
+            var radialSvg = d3.select("body").select("div.radialchart")
+            .append("svg")
+            .classed("radialchart",true)
+            .attr("width",690)
+            .attr("height",475)
+            
+            radialgraph=Radialchart()
+            radialgraph.drawRadialChart(radialSvg,selectedValues.flat())
         });
 
 }); //end of jsonBound function

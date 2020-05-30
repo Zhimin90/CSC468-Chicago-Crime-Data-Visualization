@@ -2,8 +2,8 @@ var Radialchart = function(){
     var chart = {
         drawRadialChart : function(svg, data){
 
-            groupKey2 = "ward"
-            groupKey1 = "primary_type"
+            groupKey1 = "hours"
+            groupKey2 = "primary_type"
 
             //data grouping
             dataGrouped = groupBy(data, groupKey1, groupKey2)

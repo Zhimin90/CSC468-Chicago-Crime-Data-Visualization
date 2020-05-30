@@ -79,8 +79,10 @@ def getUpdatedCrimeData():
     crime_2020_gdf = geo_price_map[geo_price_map.date >pd.to_datetime("2020-01-01")]
     print("earliest query: ", min(crime_2020_gdf['date']))
     #serialize date first
-    crime_2020_gdf['date'] = crime_2020_gdf['date'].dt.strftime('%Y-%m-%d')
-    crime_2020_gdf['updated_on'] = crime_2020_gdf['updated_on'].dt.strftime('%Y-%m-%d')
+    crime_2020_gdf['date'] = crime_2020_gdf['date'].dt.strftime(
+        '%Y-%m-%dT%H:%M:%S')
+    crime_2020_gdf['updated_on'] = crime_2020_gdf['updated_on'].dt.strftime(
+        '%Y-%m-%dT%H:%M:%S')
 
     
     crime_2020_gdf = geopandas.GeoDataFrame(

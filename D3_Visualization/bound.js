@@ -74,18 +74,6 @@ d3.json(bound_url, function (err, data) {
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
-
-            
-            d3.select("svg.heatmapchart").remove()
-            var heatmapSvg = d3.select("body").select("div.heatmapchart")
-                .append("svg")
-                .classed("heatmapchart", true)
-                .attr("id", "heatsvg")
-                .attr("width",800)
-                .attr("height", 390)
-
-            heatmap = Heatmapchart();
-            heatmap.drawHMCChart(heatmapSvg,selectedValues.flat());
             
             d3.select("svg.radialchart").remove()
             var radialSvg = d3.select("body").select("div.radialchart")
@@ -132,17 +120,6 @@ d3.json(bound_url, function (err, data) {
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
-
-            d3.select("svg.heatmapchart").remove()
-            var heatmapSvg = d3.select("body").select("div.heatmapchart")
-                .append("svg")
-                .classed("heatmapchart", true)
-                .attr("id", "heatsvg")
-                .attr("width",800)
-                .attr("height", 390)
-
-            heatmap = Heatmapchart();
-            heatmap.drawHMCChart(heatmapSvg,selectedValues.flat());
 
             d3.select("svg.radialchart").remove()
             var radialSvg = d3.select("body").select("div.radialchart")
@@ -341,7 +318,7 @@ function mouseClick(d) {
 function syncHighlight(ward){
     var ward = ward.id.replace("ward", "");
     d3.select("#lc".concat(ward))
-        .style("stroke-width", 8)
+        .style("stroke-width", 10)
         .style("opacity", 1)
     d3.selectAll("#ct".concat(ward))
         .style("stroke", "yellow")

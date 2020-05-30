@@ -220,12 +220,13 @@ var Radialchart = function(){
     //and keys to group by
     //returns a grouped object is list
     function groupBy(data, key1, key2) {
-    let uniqueKey1s = getUnique(data, key1)
+        let uniqueKey1s = getUnique(data, key1).sort((a, b) => a - b)
     let uniqueKey2s = getUnique(data, key2)
-    console.log("uniqueKey1s: ", uniqueKey1s)
-    let dict1 = {}
+    //console.log("uniqueKey1s: ", uniqueKey1s)
+    //let dict1 = {}
     dict1 = uniqueKey1s.map(val1 => {console.log(val1); return({"key": val1})})
-    console.log("dict: ", dict1)
+    //dict1 = dict1.sortBy('key');;
+    console.log("dict1: ", dict1)
     //console.log(dict)
     
     index = 0
@@ -241,6 +242,7 @@ var Radialchart = function(){
     //console.log(dict)
     return dict1
     }
+
 
     function getUnique(data, key) {
         //console.log("data in unique", data)

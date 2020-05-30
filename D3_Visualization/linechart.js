@@ -52,7 +52,8 @@ var Linechart = function(){
           wardGroup.forEach(function(da) {
               svg.append("path")
               .data([da.data])  
-              .attr("id", da.key)
+              // .attr("id", da.key)
+              .attr("id", "lc".concat(da.key))
               .attr("fill", "none")
               .attr("stroke", myColor(da.key))
               .attr("stroke-width", 3.5)
@@ -90,9 +91,9 @@ var Linechart = function(){
 
     function mousemove(d){
 
-        var ward = d3.select(this).attr("id")
+        var ward = d3.select(this).attr("id").replace("lc","");
         Tooltip
-          .html("<h3>Ward: " + d3.select(this).attr("id") + "</h3>" + getToolTipInfo(d)) //getToolTipInfo(d)
+          .html("<h3>Ward: " + ward + "</h3>" + getToolTipInfo(d)) //getToolTipInfo(d)
           .style("left", (d3.mouse(this)[0]+800) + "px")
           .style("top", (d3.mouse(this)[1]+450) + "px")
       }

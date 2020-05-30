@@ -116,6 +116,7 @@ var Crosstab = function () {
                 .data(d => keys.map(key => ({ key, value: d[key] })))
                 .enter()
                 .append("rect")
+                .attr("id", d => "ct".concat(d.key))
                 .attr("x", d => x1(d.key))
                 .attr("y", d => y(d.value))
                 .attr("width", x1.bandwidth())

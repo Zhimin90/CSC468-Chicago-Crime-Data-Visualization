@@ -7,17 +7,20 @@ var Crosstab = function () {
                 return
             }
 
-            groupKey1 = "ward"
-            groupKey2 = "primary_type"
+            groupKey2 = "ward"
+            groupKey1 = "primary_type"
 
-            console.log("in crosstab, data: ", data)
+            //console.log("in crosstab, data: ", data)
             //data grouping
             dataGrouped = groupBy(data, groupKey1, groupKey2)
+
+            //console.log("in crosstab, grouped data is: ", dataGrouped)
+
             keys = getUnique(data, groupKey2)
 
             data = dataGrouped
 
-            console.log("Grouped Data: ", data)
+            //console.log("Grouped Data: ", data)
             //create d3 helper functions
             margin = ({ top: 10, right: 10, bottom: 20, left: 40 })
             width = +d3.select("svg.crosstabchart").attr("width")
@@ -184,11 +187,11 @@ var Crosstab = function () {
 //and keys to group by
 //returns a grouped object is list
 function groupBy(data, key1, key2) {
-    uniqueKey1s = getUnique(data, key1)
-    uniqueKey2s = getUnique(data, key2)
-
+    let uniqueKey1s = getUnique(data, key1)
+    let uniqueKey2s = getUnique(data, key2)
+    let dict = {}
     dict = uniqueKey1s.map(val => { return ({ "key": val})})
-    //console.log(dict)
+    //console.log("dict: ", dict)
 
     index = 0
     uniqueKey1s.forEach(key1Value=> {

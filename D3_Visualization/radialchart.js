@@ -2,12 +2,12 @@ var Radialchart = function(){
     var chart = {
         drawRadialChart : function(svg, data){
 
-            groupKey1 = "ward"
-            groupKey2 = "primary_type"
+            groupKey2 = "ward"
+            groupKey1 = "primary_type"
 
             //data grouping
             dataGrouped = groupBy(data, groupKey1, groupKey2)
-            console.log("group by is",dataGrouped)
+            console.log("group in radial by is",dataGrouped)
 
             keys = getUnique(data, groupKey2)
 
@@ -17,14 +17,16 @@ var Radialchart = function(){
    /*         results=topKData(dataGrouped,10)
             data=results[0]
             keys=results[1]  //this gives us the index keys, i.e. the primary_types, etc
- */
+ */         /*
             for (i of keys){
             console.log("the new key is ",i)
             }
             // --------
-            console.log("Grouped Data: ", data)
+            console.log("Grouped Data: ", data)*/
 
-            var width = +svg.attr("width"),
+            
+
+            width = +svg.attr("width"),
             height = +svg.attr("height"),
             innerRadius = 150,
             outerRadius = Math.min(width, height) * 0.5,
@@ -32,36 +34,39 @@ var Radialchart = function(){
             .attr("transform", "translate(" + width*.4+ "," + height * .5 + ")")
 
 
-            var x = d3.scaleBand()
+            x = d3.scaleBand()
                 .range([0, 2 * Math.PI])
                 .align(0);
             
-            var y = d3.scaleRadial()
+            y = d3.scaleRadial()
                 .range([innerRadius, outerRadius]);
             
-            var z = d3.scaleOrdinal()
+            z = d3.scaleOrdinal()
                 .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
                 
             x.domain(data.map(function(d) {  //gives the key aka ward number
        //         console.log("x.domina is",d.key)
                 return d.key; })); 
-            y.domain([0, gettotal(data)]);//d3.max(data, function(d) { return d.total; })
+                /*
+            y.domain([0, gettotal(data)]);//d3.max(data, function(d) { return d.total; })*/
+
             z.domain(keys); //data.columns.slice(1) =keys
-            console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data))
+            //console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data)) 
+            
             g.append("g")
                 .selectAll("g")
                 .data(d3.stack().keys(keys)(data)) //data.columns.slice(1) =keys
                 .enter().append("g")
                 .attr("fill", function(d) { 
-                    console.log("z(d.key)",z(d.key))
+                    //console.log("z(d.key)",z(d.key))
                     return z(d.key); }) //gives the fill color
                 .selectAll("path")
                 .data(function(d) { 
               //      console.log("d # 2 is",d)
               //      console.log("d key is",d.key) //returns the crime type
               //      console.log("d value is",d[0].data[d.key]) //returns the value for crime type
-                    var newKey = d.key
-                    var newValue=d[0].data[d.key]
+                    //var newKey = d.key
+                    //var newValue=d[0].data[d.key]
                     return d})
                 .enter().append("path")
                 .attr("d", d3.arc()
@@ -75,13 +80,13 @@ var Radialchart = function(){
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave);
             
-            var label = g.append("g")
+            label = g.append("g")
                 .selectAll("g")
                 .data(data)
                 .enter().append("g")
                 .attr("text-anchor", "middle")
                 .attr("transform", function(d) { 
-                    console.log("d.key is",d.key)
+                    //console.log("d.key is",d.key)
                     return "rotate(" + ((x(d.key) + x.bandwidth() / 2) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)"; });
             
             label.append("line")
@@ -93,10 +98,10 @@ var Radialchart = function(){
                 .text(function(d) { return d.key; })
                 .style("font","50px times");
             
-            var yAxis = g.append("g")
+            yAxis = g.append("g")
                 .attr("text-anchor", "end");
             
-            var yTick = yAxis
+            yTick = yAxis
                 .selectAll("g")
                 .data(y.ticks(10).slice(1))
                 .enter().append("g");
@@ -129,7 +134,7 @@ var Radialchart = function(){
                 .attr("dy", "-1em")
                 .text("Population");
             
-            var legend = g.append("g")
+            legend = g.append("g")
                 .selectAll("g")
                 .data(keys.reverse()) //data.columns.slice(1) =keys
                 .enter().append("g")
@@ -144,13 +149,13 @@ var Radialchart = function(){
                 .attr("x", 24)
                 .attr("y", 9)
                 .attr("dy", "0.35em")
-                .text(function(d) { return d; });
+                .text(function(d) { return d; }); 
             }
             
         };
 
         //-------------Tooltip----------------------
-        var Tooltip = d3.select("#lcdivid")
+        Tooltip = d3.select("#lcdivid")
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
@@ -174,14 +179,14 @@ var Radialchart = function(){
        // {ASSAULT:41,THEFT:208,MOTOR VEHICLE THEFT:}
 
         function mousemove(d){
-        var total = 0
-        var target = d[1]
-        var keyname = "nothing"
-        var value = "nothing"
+        total = 0
+        target = d[1]
+        keyname = "nothing"
+        value = "nothing"
         
         for (i in d.data){
             if(i !="key"){
-            console.log("key is ",i + " value is:"+d.data[i])
+            //console.log("key is ",i + " value is:"+d.data[i])
             total +=d.data[i]
             if(total ==target){
             //  console.log("total is",total)
@@ -215,42 +220,49 @@ var Radialchart = function(){
     //and keys to group by
     //returns a grouped object is list
     function groupBy(data, key1, key2) {
-    uniqueKey1s = getUnique(data, key1)
-    uniqueKey2s = getUnique(data, key2)
-
-    dict = uniqueKey1s.map(val=> {return({"key": val})})
+    let uniqueKey1s = getUnique(data, key1)
+    let uniqueKey2s = getUnique(data, key2)
+    console.log("uniqueKey1s: ", uniqueKey1s)
+    let dict1 = {}
+    dict1 = uniqueKey1s.map(val1 => {console.log(val1); return({"key": val1})})
+    console.log("dict: ", dict1)
     //console.log(dict)
-
+    
     index = 0
     uniqueKey1s.forEach(key1Value=> {
         dataOnlykey1 = data.filter(val => val.properties[key1] === key1Value)
         uniqueKey2s.forEach(key2Value=> {
             listOfValue = dataOnlykey1.filter(val => val.properties[key2] === key2Value)
             count = listOfValue.length
-            if (key1Value === dict[index].key) { dict[index][key2Value] = count}
+            if (key1Value === dict1[index].key) { dict1[index][key2Value] = count}
         });
         index++;
     });
     //console.log(dict)
-    return dict
-}
+    return dict1
+    }
 
-
+    function getUnique(data, key) {
+        //console.log("data in unique", data)
+        //console.log("key", key)
+        const unique = [...new Set(data.map(item => item.properties[key]))];
+        return unique
+    }
 
 function gettotal(data) {
-    var totallist=[]
-    var total = 0
+    totallist=[]
+    total = 0
     for (ward of data){
         for(key of Object.keys(ward)) {
-            console.log("key is",key)
+            //console.log("key is",key)
             total += ward[key]=+ward[key]
-            console.log(total)}
+            /*console.log(total)8*/}
             totallist.push(total)
-            var total = 0;}
+            total = 0;}
 
     //javascript specific way of finding max of an array
     if (totallist.length > 0 ){
-    var max = totallist.reduce(function(a, b) {
+    max = totallist.reduce(function(a, b) {
         console.log("the max of list is", Math.max(a,b))
         return Math.max(a, b);
             });
@@ -264,10 +276,10 @@ function topKData(data,k){
 
     test = data
     keys=[]
-    var sortable =[]
+    sortable =[]
 
     for (test of data){
-        for (var i in test){
+        for ( i in test){
             if (i != "key"){
                 sortable.push([i,test[i]])
             }
@@ -282,7 +294,7 @@ function topKData(data,k){
         sortable.push(["key",test["key"]])
         console.log("new sortable is",sortable)
 
-        var objSorted ={}
+        objSorted ={}
         sortable.forEach(function(item){
             if(item[0] != "key" && !(keys.includes(item[0]))){
             console.log("the item[0] is",item[0])
@@ -300,11 +312,7 @@ function topKData(data,k){
 }
 
 
-function getUnique(data, key) {
-    //console.log(data)
-    const unique = [...new Set(data.map(item => item.properties[key]))];
-    return unique
-}
+
 
     return chart;
 };

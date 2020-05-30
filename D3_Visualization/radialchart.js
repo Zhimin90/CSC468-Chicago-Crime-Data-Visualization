@@ -1,9 +1,11 @@
 var Radialchart = function(){
     var chart = {
         drawRadialChart : function(svg, data){
-
             groupKey1 = "hours"
             groupKey2 = "primary_type"
+
+            crime_total_count = gettotal(data, groupKey1)
+            console.log("radial data length", data.length)
 
             //data grouping
             dataGrouped = groupBy(data, groupKey1, groupKey2)
@@ -47,8 +49,8 @@ var Radialchart = function(){
             x.domain(data.map(function(d) {  //gives the key aka ward number
        //         console.log("x.domina is",d.key)
                 return d.key; })); 
-                /*
-            y.domain([0, gettotal(data)]);//d3.max(data, function(d) { return d.total; })*/
+            
+            y.domain([0, crime_total_count  ]);//d3.max(data, function(d) { return d.total; })
 
             z.domain(keys); //data.columns.slice(1) =keys
             //console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data)) 
@@ -220,7 +222,7 @@ var Radialchart = function(){
     //and keys to group by
     //returns a grouped object is list
     function groupBy(data, key1, key2) {
-        let uniqueKey1s = getUnique(data, key1).sort((a, b) => a - b)
+    let uniqueKey1s = getUnique(data, key1).sort((a, b) => a - b)
     let uniqueKey2s = getUnique(data, key2)
     //console.log("uniqueKey1s: ", uniqueKey1s)
     //let dict1 = {}
@@ -251,25 +253,15 @@ var Radialchart = function(){
         return unique
     }
 
-function gettotal(data) {
-    totallist=[]
-    total = 0
-    for (ward of data){
-        for(key of Object.keys(ward)) {
-            //console.log("key is",key)
-            total += ward[key]=+ward[key]
-            /*console.log(total)8*/}
-            totallist.push(total)
-            total = 0;}
-
-    //javascript specific way of finding max of an array
-    if (totallist.length > 0 ){
-    max = totallist.reduce(function(a, b) {
-        console.log("the max of list is", Math.max(a,b))
-        return Math.max(a, b);
-            });
-        
-        return max }
+function gettotal(data, key) {
+    uniqueKey = getUnique(data, key)
+    crimeCount = uniqueKey.map(val1=>{
+        dataOnlykey = data.filter(val2 => val2.properties[key] === val1)
+        count = dataOnlykey.length
+        //console.log("count", count)
+        return count
+    })
+    return Math.max(...crimeCount)
   }
   
 //unused function to take the top K keys instead of all them. 

@@ -54,7 +54,7 @@ var Radialchart = function(){
 
             z.domain(keys); //data.columns.slice(1) =keys
             //console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data)) 
-            
+      
             g.append("g")
                 .selectAll("g")
                 .data(d3.stack().keys(keys)(data)) //data.columns.slice(1) =keys
@@ -71,6 +71,7 @@ var Radialchart = function(){
                     //var newValue=d[0].data[d.key]
                     return d})
                 .enter().append("path")
+                .attr("id", "********put ward # here *******")
                 .attr("d", d3.arc()
                     .innerRadius(function(d) { return y(d[0]); })
                     .outerRadius(function(d) { return y(d[1]); }) //this gives the path points for the outer radius

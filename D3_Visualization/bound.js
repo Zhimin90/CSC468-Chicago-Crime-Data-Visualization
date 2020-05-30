@@ -70,17 +70,29 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "linesvg")
                 .attr("width",800)
-                .attr("height", 290)
+                .attr("height", 390)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
+
+            
+            d3.select("svg.heatmapchart").remove()
+            var heatmapSvg = d3.select("body").select("div.heatmapchart")
+                .append("svg")
+                .classed("heatmapchart", true)
+                .attr("id", "heatsvg")
+                .attr("width",800)
+                .attr("height", 390)
+
+            heatmap = Heatmapchart();
+            heatmap.drawHMCChart(heatmapSvg,selectedValues.flat());
             
             d3.select("svg.radialchart").remove()
             var radialSvg = d3.select("body").select("div.radialchart")
             .append("svg")
             .classed("radialchart",true)
             .attr("width",690)
-            .attr("height",475)
+            .attr("height",375)
             
             radialgraph=Radialchart()
             radialgraph.drawRadialChart(radialSvg,selectedValues.flat())
@@ -114,19 +126,30 @@ d3.json(bound_url, function (err, data) {
             var lineSvg = d3.select("body").select("div.linechart")
                 .append("svg")
                 .classed("linechart", true)
-                .attr("id", "line")
+                .attr("id", "linesvg")
                 .attr("width",800)
-                .attr("height", 290)
+                .attr("height", 390)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
+
+            d3.select("svg.heatmapchart").remove()
+            var heatmapSvg = d3.select("body").select("div.heatmapchart")
+                .append("svg")
+                .classed("heatmapchart", true)
+                .attr("id", "heatsvg")
+                .attr("width",800)
+                .attr("height", 390)
+
+            heatmap = Heatmapchart();
+            heatmap.drawHMCChart(heatmapSvg,selectedValues.flat());
 
             d3.select("svg.radialchart").remove()
             var radialSvg = d3.select("body").select("div.radialchart")
             .append("svg")
             .classed("radialchart",true)
             .attr("width",690)
-            .attr("height",475)
+            .attr("height",375)
             
             radialgraph=Radialchart()
             radialgraph.drawRadialChart(radialSvg,selectedValues.flat())
@@ -253,7 +276,7 @@ var Tooltip = d3.select("body")
         .style('stroke', "black")
         .attr("stroke-width", 1)
         
-
+        syncHighlightRemove(this)
         var c = d3.select(this);
         if (c.classed("clicked")) {
             c.style("fill", clickedColor)
@@ -264,6 +287,7 @@ var Tooltip = d3.select("body")
         }
     }
 
+    //highlight
 function mouseOver(d) {
     Tooltip
     .style("opacity", 0.7)
@@ -272,7 +296,7 @@ function mouseOver(d) {
     .attr("stroke-width", 5)
     .style("opacity", 1)
 
-
+    syncHighlight(this)
     var c = d3.select(this)
     if (c.classed("clicked")) {
         c.style("fill", highlightSelected)
@@ -314,13 +338,31 @@ function mouseClick(d) {
     }
 
 
-    // function hidePanel(){
-    //     var panel = document.getElementById("chartpanelid")
-    //     if (panel.style.display === "none") {
-    //         panel.style.display = "block";
-    //       } else {
-    //         panel.style.display = "none";
-    //       }
-    // }
+function syncHighlight(ward){
+    var ward = ward.id.replace("ward", "");
+    d3.select("#lc".concat(ward))
+        .style("stroke-width", 8)
+        .style("opacity", 1)
+    d3.selectAll("#ct".concat(ward))
+        .style("stroke", "yellow")
+        .attr("stroke-width", 5)
+        .style("opacity", 1)
+    d3.selectAll("#rc".concat(ward))
+        .style("stroke", "yellow")
+        .attr("stroke-width", 5)
+        .style("opacity", 1)  
+}//syncHighlight
+
+function syncHighlightRemove(ward){
+    var ward = ward.id.replace("ward", "");
+    d3.select("#lc".concat(ward))
+        .style("stroke-width", 3.5)
+        .style("opacity", 1)
+    d3.selectAll("#ct".concat(ward))
+        .style("stroke", "none")    
+    d3.selectAll("#rc".concat(ward))
+        .style("stroke", "none")   
+
+}//syncHighlightRemove
 
 }

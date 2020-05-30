@@ -51,7 +51,9 @@ def getUpdatedCrimeData():
 
     # Convert to pandas DataFrame
     results_df = pd.DataFrame.from_records(results)
-
+    results_df = results_df[results_df.primary_type.isin(
+        results_df.primary_type.value_counts()[:6].index)]
+        
     test_df = results_df
     xbound = (-87.9361, -87.5245)
     ybound = (41.6447, 42.023)

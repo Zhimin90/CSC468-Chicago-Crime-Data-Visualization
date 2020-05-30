@@ -7,8 +7,8 @@ var Crosstab = function () {
                 return
             }
 
-            groupKey2 = "ward"
-            groupKey1 = "primary_type"
+            groupKey1 = "ward"
+            groupKey2 = "primary_type"
 
             //console.log("in crosstab, data: ", data)
             //data grouping

@@ -1,8 +1,30 @@
 var Radialchart = function(){
     var chart = {
+        selector: function () {
+
+            let data = [{ option: "Ward crime count by Hour", value: "hours|ward" }
+                , { option: "Crime Type by Hour", value: "hours|primary_type" }
+                , { option: "Crime location by Hour", value: "hours|location_description" }
+                , ]
+
+            var ctSelector = d3.select("div.radialchart")
+                .append("select")
+                .attr("id", "radialselector")
+                .style("position", "absolute")
+                .style("z-index", 1000)
+                .selectAll("option")
+                .data(data)
+                .enter().append("option")
+                .text(function (d) { return d.option; })
+                .attr("value", function (d, i) {
+                    return d.value;
+                });
+
+        },
+        
         drawRadialChart : function(svg, data){
 
-            output = document.getElementById('groupBy').value
+            output = document.getElementById('radialselector').value
             output = output.split('|')
 
             groupKey1 = output[0]

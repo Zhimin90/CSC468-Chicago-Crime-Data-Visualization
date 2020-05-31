@@ -2,12 +2,32 @@
 
 var Crosstab = function () {
     var chart = {
+        selector: function () {
+
+            let data = [{ option: "Crime Type by Ward", value: "ward|primary_type"}
+                , { option: "Crime location by Ward", value: "ward|location_description"}]
+
+            var ctSelector = d3.select("div.crosstabchart")
+                .append("select")
+                .attr("id", "crosstabselector")
+                .style("position", "absolute")
+                .style("z-index", 1000)
+                .selectAll("option")
+                .data(data)
+                .enter().append("option")
+                .text(function (d) { return d.option; })
+                .attr("value", function (d, i) {
+                    return d.value;
+                });
+            
+        },
+
         barchart: function (svg, data) {
             if (data.length === 0) {
                 return
             }
 
-            output = document.getElementById('groupBy').value
+            output = document.getElementById('crosstabselector').value
             output = output.split('|')
 
             groupKey1 = output[0]

@@ -115,6 +115,7 @@
     }
 
     .crosstabchart {
+      
       float:right;
       height: 410px;
       width: 100%;
@@ -212,13 +213,6 @@
 
   <div id="map"></div>
   <nav id="menu"></nav>
-  <!--
-  //Removed. Created by D3 instead
-  <div class="chartpanel">
-    <div class="crosstabchart"></div>
-    <div class="linechart"></div>
-  </div>
-  -->
   <div class="map-overlay top">
     <div class="map-overlay-inner">
       <h2>Chicago Crimes in 2020</h2>
@@ -239,12 +233,6 @@
     </div>
     <div>
       <label>Select layer</label style="border: 0; color: #f6931f; font-weight: bold;" size="100">
-      <select id="groupBy" name="groupBy">
-        <option value="ward|primary_type">Crime by Ward</option>
-        <option value="ward|location_description">Crime location by Ward</option>
-        <option value="hours|primary_type">Crime by Hour</option>
-        <option value="hours|location_description">Crime location by Hour</option>
-      </select>
     </div>    
   </div>
     

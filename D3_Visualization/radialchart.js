@@ -97,7 +97,7 @@ var Radialchart = function(){
                     //var newValue=d[0].data[d.key]
                     return d})
                 .enter().append("path")
-                .attr("id", "********put ward # here *******")
+                .attr("id", d=>"rc".concat(d.data.key))
                 .attr("d", d3.arc()
                     .innerRadius(function(d) { return y(d[0]); })
                     .outerRadius(function(d) { return y(d[1]); }) //this gives the path points for the outer radius

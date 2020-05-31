@@ -1,8 +1,12 @@
 var Radialchart = function(){
     var chart = {
         drawRadialChart : function(svg, data){
-            groupKey1 = "hours"
-            groupKey2 = "primary_type"
+
+            output = document.getElementById('groupBy').value
+            output = output.split('|')
+
+            groupKey1 = output[0]
+            groupKey2 = output[1]
 
             crime_total_count = gettotal(data, groupKey1)
             console.log("radial data length", data.length)
@@ -99,7 +103,7 @@ var Radialchart = function(){
             label.append("text")
                 .attr("transform", function(d) { return (x(d.key) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI ? "rotate(90)translate(0,16)" : "rotate(-90)translate(0,-9)"; })
                 .text(function(d) { return d.key; })
-                .style("font","50px times");
+                .style("font","25px times");
             
             yAxis = g.append("g")
                 .attr("text-anchor", "end");

@@ -7,8 +7,11 @@ var Crosstab = function () {
                 return
             }
 
-            groupKey1 = "ward"
-            groupKey2 = "primary_type"
+            output = document.getElementById('groupBy').value
+            output = output.split('|')
+
+            groupKey1 = output[0]
+            groupKey2 = output[1]
 
             //console.log("in crosstab, data: ", data)
             //data grouping

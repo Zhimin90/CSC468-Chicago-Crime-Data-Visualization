@@ -4,7 +4,8 @@ var Crosstab = function () {
     var chart = {
         selector: function () {
 
-            let data = [{ option: "Crime Type by Ward", value: "ward|primary_type"}
+            let data = [{ option: "Crime Type by Ward", value: "primary_type|ward" }
+                , { option: "Crime Type by Ward", value: "ward|primary_type"}
                 , { option: "Crime location by Ward", value: "ward|location_description"}]
 
             var ctSelector = d3.select("div.crosstabchart")

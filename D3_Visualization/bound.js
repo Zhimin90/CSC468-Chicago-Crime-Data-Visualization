@@ -52,6 +52,11 @@ d3.json(bound_url, function (err, data) {
                 return selectedWards[key];
             });
 
+            crosstab = Crosstab()
+
+            if (d3.select("#crosstabselector").empty()){
+                crosstab.selector()    //selector must be on top
+            }
             //create svg for crosstab
             d3.select("svg.crosstabchart").remove()
             var barSvg = d3.select("body").select("div.crosstabchart")
@@ -60,9 +65,10 @@ d3.json(bound_url, function (err, data) {
                 .attr("id", "bar")
                 .attr("width", 800)
                 .attr("height", 395)
-                         
-            crosstab = Crosstab()
+
+            
             crosstab.barchart(barSvg,selectedValues.flat())
+            
 
             d3.select("svg.linechart").remove()
             var lineSvg = d3.select("body").select("div.linechart")
@@ -75,14 +81,18 @@ d3.json(bound_url, function (err, data) {
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
             
-            d3.select("svg.radialchart").remove()
-            var radialSvg = d3.select("body").select("div.radialchart")
-            .append("svg")
-            .classed("radialchart",true)
-            .attr("width",690)
-            .attr("height",375)
+            
             
             radialgraph=Radialchart()
+            if (d3.select("#radialselector").empty()) {
+                radialgraph.selector()    //selector must be on top
+            }
+            d3.select("svg.radialchart").remove()
+            var radialSvg = d3.select("body").select("div.radialchart")
+                .append("svg")
+                .classed("radialchart", true)
+                .attr("width", 690)
+                .attr("height", 375)
             radialgraph.drawRadialChart(radialSvg,selectedValues.flat())
             
         });

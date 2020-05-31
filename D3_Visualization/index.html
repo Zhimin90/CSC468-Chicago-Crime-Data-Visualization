@@ -26,11 +26,10 @@
   
   <script src="bound.js"></script>
   <script src="radialchart.js"></script>
-
-   
   <style src="style.css"></style>
 
   <style>
+
     body {
       margin: 0;
       position: fixed;
@@ -68,7 +67,7 @@
       font: 12px/16px 'Helvetica Neue', Arial, Helvetica, sans-serif;
       position: absolute;
       width: 300px;
-      top: 0;
+      top: 40;
       left: 0;
       padding: 5px;
     }
@@ -76,7 +75,7 @@
     .map-overlay .map-overlay-inner {
       background-color: #fff;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-      border-radius: 3px;
+      border-radius: 10px;
       padding: 5px;
       margin-bottom: 5px;
     }
@@ -116,6 +115,7 @@
     }
 
     .crosstabchart {
+      
       float:right;
       height: 410px;
       width: 100%;
@@ -151,7 +151,6 @@
       fill: white;
       font-size: large;
     }
-
 
 
     /* below are for the toggle on off buttons */
@@ -214,13 +213,6 @@
 
   <div id="map"></div>
   <nav id="menu"></nav>
-  <!--
-  //Removed. Created by D3 instead
-  <div class="chartpanel">
-    <div class="crosstabchart"></div>
-    <div class="linechart"></div>
-  </div>
-  -->
   <div class="map-overlay top">
     <div class="map-overlay-inner">
       <h2>Chicago Crimes in 2020</h2>
@@ -232,15 +224,18 @@
       <div style='display: inline-block;'>
           AutoPlay 
           <input type='checkbox' style='display: inline-block;' onclick="AutoFunc()" checked>
-        
       </div>
       <p>
         <label for="amount">Date range:</label>
         <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" size="100" />
       </p>
       <div id="slider-range"></div>
+    </div>
+    <div>
+      <label>Select layer</label style="border: 0; color: #f6931f; font-weight: bold;" size="100">
     </div>    
   </div>
+    
   
   <script>
     //URL will be axios fetch
@@ -262,6 +257,7 @@
       // Create a month property value based on time
       // used to filter against.
       data.features = data.features.map(function (d) {
+        d.properties.month = new Date(d.properties.date).getMonth();
         d.properties.hours = new Date(d.properties.date).getHours();
         return d;
       });

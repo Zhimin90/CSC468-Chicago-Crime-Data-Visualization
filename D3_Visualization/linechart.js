@@ -49,7 +49,7 @@ var Linechart = function(){
                 )
           }
 
-          wardGroup.forEach(function(da) {
+          wardGroup.forEach(function(da , i) {
               svg.append("path")
               .data([da.data])  
               // .attr("id", da.key)
@@ -64,6 +64,31 @@ var Linechart = function(){
               .on("mouseover", mouseover)
               .on("mousemove", mousemove)
               .on("mouseleave", mouseleave)
+
+              //legend side
+              svg.selectAll("lineLabels")
+                  .data([da.data])
+                  .enter()
+                  .append('g')
+                  .append("text")
+                    .attr("transform", function(d) { return "translate(" + x(d[0].date) + "," + y(d[0].value)  + ")"; }) 
+                    .attr("x", 12) // shift the text a bit more right
+                    .text("Ward "+ da.key)
+                    .style("fill", function(d){ return myColor(da.key) })
+                    .style("font-size", 20)
+
+              //legend top
+              // svg
+              // .selectAll("lineLegend")
+              // .data([da.data])
+              // .enter()
+              //   .append('g')
+              //   .append("text")
+              //     .attr('x', function(d){ return 10 + i*30})
+              //     .attr('y', 0)
+              //     .text(function(d) { return da.key; })
+              //     .style("fill", function(d){ return myColor(da.key) })
+              //     .style("font-size", 20)
             }) 
 
         }//drawChart
@@ -155,14 +180,11 @@ var Linechart = function(){
     }//findMaxMonth
 
     function getToolTipInfo(ward){
-      // console.log("-----gettoo tip")
-      // console.log(d3.select(this).attr('id'))
       sortedWard = ward.slice().sort((a,b) => d3.ascending(a.date, b.date));
       var rts = "";
       for(w of sortedWard){
         rts = rts + "<h5 style=text-align:center;>" + d3.timeFormat("%b")(w.date) + ": " + w.value + "</h5>";
       }
-
       return rts;
     }//getToolTipInfo
 

@@ -23,7 +23,7 @@
   <script src="mapbox.js"></script>
   <script src="crosstabbars.js"></script>
   <script src="linechart.js"></script>
-  <script src="heatmapchart.js"></script>
+  
   <script src="bound.js"></script>
   <script src="radialchart.js"></script>
 
@@ -263,7 +263,6 @@
       // used to filter against.
       data.features = data.features.map(function (d) {
         d.properties.month = new Date(d.properties.date).getMonth();
-        d.properties.hours = new Date(d.properties.date).getHours();
         return d;
       });
 
@@ -295,11 +294,6 @@
         .append('div')
         .attr('class', 'radialchart')
         .attr('id', 'rcdivid')
-
-      d3.select('div.chartpanel')
-        .append('div')
-        .attr('class', 'heatmapchart')
-        
 
       //load from bound.js
       runD3(data);

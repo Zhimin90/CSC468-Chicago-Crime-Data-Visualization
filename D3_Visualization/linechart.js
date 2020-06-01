@@ -11,8 +11,11 @@ var Linechart = function(){
           width = +d3.select("svg.linechart").attr("width") - margin.left - margin.right,
           height = +d3.select("svg.linechart").attr("height") - margin.top - margin.bottom;
 
-          var myColor = d3.scaleSequential().domain([1,50])
-                           .interpolator(d3.interpolateTurbo);
+          // var myColor = d3.scaleSequential().domain([1,50])
+          //                  .interpolator(d3.interpolateTurbo);
+
+          myColor = d3.scaleOrdinal()
+          .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
 
           var x = d3.scaleTime()
                     .domain([new Date("01"), maxMonth])
@@ -119,7 +122,7 @@ var Linechart = function(){
         var ward = d3.select(this).attr("id").replace("lc","");
         Tooltip
           .html("<h3>Ward: " + ward + "</h3>" + getToolTipInfo(d)) //getToolTipInfo(d)
-          .style("left", (d3.mouse(this)[0]+800) + "px")
+          .style("left", (d3.mouse(this)[0]+1100) + "px")
           .style("top", (d3.mouse(this)[1]+450) + "px")
       }
 

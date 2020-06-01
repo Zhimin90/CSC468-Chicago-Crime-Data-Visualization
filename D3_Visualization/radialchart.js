@@ -262,7 +262,7 @@ var Radialchart = function(){
               .html("Value: " + value) 
               .html("<h3>" + keyname + ": " + value + "</h3>") 
               .style("left", (d3.mouse(this)[0]+300) + "px")
-              .style("top", (d3.mouse(this)[1]+650) + "px")
+              .style("top", (d3.mouse(this)[1]+900) + "px")
           }
 
 

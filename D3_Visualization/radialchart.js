@@ -40,7 +40,7 @@ var Radialchart = function(){
             keys = getUnique(data, groupKey2)
 
             data = dataGrouped
-
+            console.log("data", data)
             // ----- unused since we want all of keys, not just top k keys.
    /*         results=topKData(dataGrouped,10)
             data=results[0]
@@ -80,10 +80,27 @@ var Radialchart = function(){
 
             z.domain(keys); //data.columns.slice(1) =keys
             //console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data)) 
-      
+            
+            stackedData = d3.stack().keys(keys)(data)
+
+            stackedData.forEach(
+                layer1=>{
+                    layer1.forEach(
+                        layer2=>{
+                            //console.log("layer2",layer2)
+                            clonedData = { ...layer2.data };
+                            layer2.clonedData = clonedData
+                            layer2.clonedData.key0 = +layer1.key
+                        }
+                        
+                    )
+                }
+            )
+            //console.log("stackedData", stackedData)
+
             g.append("g")
                 .selectAll("g")
-                .data(d3.stack().keys(keys)(data)) //data.columns.slice(1) =keys
+                .data(stackedData) //data.columns.slice(1) =keys
                 .enter().append("g")
                 .attr("fill", function(d) { 
                     //console.log("z(d.key)",z(d.key))
@@ -97,7 +114,7 @@ var Radialchart = function(){
                     //var newValue=d[0].data[d.key]
                     return d})
                 .enter().append("path")
-                .attr("id", d=>"rc".concat(d.data.key))
+                .attr("id", d => "rc".concat(d.clonedData.key0))
                 .attr("d", d3.arc()
                     .innerRadius(function(d) { return y(d[0]); })
                     .outerRadius(function(d) { return y(d[1]); }) //this gives the path points for the outer radius

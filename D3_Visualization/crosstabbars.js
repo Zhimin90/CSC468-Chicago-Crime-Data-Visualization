@@ -96,13 +96,13 @@ var Crosstab = function () {
 
             color = d3.scaleOrdinal()
                 .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
-
+            
             xAxis = g => g
                 .attr("transform", `translate(0,${height - margin.bottom})`)
-                .attr("class", "axisWhite")
+                .attr("class", "axisWhite1")
                 .call(d3.axisBottom(x0).tickSizeOuter(0))
                 //.call(g => g.select(".domain").remove())
-
+            
             yAxis = g => g
                 .attr("transform", `translate(${margin.left},0)`)
                 .attr("class", "axisWhite")
@@ -161,7 +161,7 @@ var Crosstab = function () {
             
             
             
-            console.log("ended")
+            //console.log("ended")
             //return svg.node();
         }
     }

@@ -4,14 +4,12 @@
   <meta charset="utf-8">
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
-  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-
+ 
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
   <script src="https://d3js.org/d3-geo.v1.min.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
   
@@ -27,6 +25,10 @@
   <script src="bound.js"></script>
   <script src="radialchart.js"></script>
   <style src="style.css"></style>
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 
   <style>
 
@@ -47,7 +49,7 @@
       text-align:center;
       margin-left: auto;
       margin-right: auto;
-      background-color: lightgrey;
+      background-color: white;
     }
 
     #map {
@@ -133,9 +135,9 @@
     .radialchart {
       float:right;
       clear:right;
-      height: 400px;
+      height: 500px;
       width: 100%;
-      padding: 10px;      
+      padding: 20px;      
     }
 
 
@@ -149,7 +151,19 @@
 
     .axisWhite text{
       fill: white;
-      font-size: large;
+      font-size: medium;
+    }
+
+    .axisWhite1 line{
+      stroke: white;
+    }
+
+    .axisWhite1 path{
+      stroke: white;
+    }
+
+    .axisWhite1 text{
+      fill: white;
     }
 
 

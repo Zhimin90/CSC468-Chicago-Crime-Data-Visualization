@@ -96,7 +96,6 @@ var Radialchart = function(){
                     )
                 }
             )
-            //console.log("stackedData", stackedData)
 
             g.append("g")
                 .selectAll("g")
@@ -125,6 +124,21 @@ var Radialchart = function(){
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave);
+
+            yAxis = g.append("g")
+                .attr("text-anchor", "end");
+
+            yTick = yAxis
+                .selectAll("g")
+                .data(y.ticks(10).slice(1))
+                .enter().append("g");
+
+            //console.log("stackedData", stackedData)
+            yTick.append("circle")
+                .attr("fill", "none")
+                .attr("stroke", "#FFF")
+                .attr("stroke-opacity", 0.25)
+                .attr("r", y);
             
             label = g.append("g")
                 .selectAll("g")
@@ -137,49 +151,36 @@ var Radialchart = function(){
             
             label.append("line")
                 .attr("x2", -5)
-                .attr("stroke", "#000");
+                .attr("stroke", "#FFF");
             
             label.append("text")
-                .attr("transform", function(d) { return (x(d.key) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI ? "rotate(90)translate(0,16)" : "rotate(-90)translate(0,-9)"; })
+                .attr("transform", function(d) { return (x(d.key) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI ? "rotate(90)translate(0,21)" : "rotate(-90)translate(0,-9)"; })
                 .text(function(d) { return d.key+1; })
                 .style("font","20px times") //the font size of the radial chart
                 .style("fill","white"); //the color of the radial chart 
             
-            yAxis = g.append("g")
-                .attr("text-anchor", "end");
-            
-            yTick = yAxis
-                .selectAll("g")
-                .data(y.ticks(10).slice(1))
-                .enter().append("g");
-            
-            yTick.append("circle")
-                .attr("fill", "none")
-                .attr("stroke", "#000")
-                .attr("stroke-opacity", 0.5)
-                .attr("r", y);
             
             yTick.append("text")
-                .attr("x", -6)
-                .attr("y", function(d) { return -y(d); })
+                .attr("x", (d, i) => -i * 5 - 2 )
+                .attr("y", function(d) { return -y(d) + 2; })
                 .attr("dy", "0.35em")
                 .attr("fill", "none")
                 .attr("stroke", "#fff")
                 .attr("stroke-linejoin", "round")
-                .attr("stroke-width", 3)
+                .attr("stroke-width", 2)
                 .text(y.tickFormat(10, "s"));
             
             yTick.append("text")
-                .attr("x", -6)
-                .attr("y", function(d) { return -y(d); })
+                .attr("x", (d, i) => -i * 5 - 2 )
+                .attr("y", function(d) { return -y(d) + 2; })
                 .attr("dy", "0.35em")
                 .text(y.tickFormat(10, "s"));
             
-            yAxis.append("text")
+             /*yAxis.append("text")
                 .attr("x", -6)
                 .attr("y", function(d) { return -y(y.ticks(10).pop()); })
                 .attr("dy", "-1em")
-                .text("Population");
+                .text("Population");*/
             
             legend = g.append("g")
                 .selectAll("g")

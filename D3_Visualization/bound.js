@@ -135,8 +135,8 @@ d3.json(bound_url, function (err, data) {
             var radialSvg = d3.select("body").select("div.radialchart")
             .append("svg")
             .classed("radialchart",true)
-            .attr("width",690)
-            .attr("height",375)
+            .attr("width",700) //690
+            .attr("height",400) //375
             
             radialgraph=Radialchart()
             radialgraph.drawRadialChart(radialSvg,selectedValues.flat())

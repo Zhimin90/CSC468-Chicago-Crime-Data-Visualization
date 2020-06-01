@@ -56,7 +56,7 @@ var Radialchart = function(){
 
             width = +svg.attr("width"),
             height = +svg.attr("height"),
-            innerRadius = 150,
+            innerRadius = 125,
             outerRadius = Math.min(width, height) * 0.5,
             g = svg.append("g")
             .attr("transform", "translate(" + width*.4+ "," + height * .5 + ")")
@@ -141,8 +141,9 @@ var Radialchart = function(){
             
             label.append("text")
                 .attr("transform", function(d) { return (x(d.key) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI ? "rotate(90)translate(0,16)" : "rotate(-90)translate(0,-9)"; })
-                .text(function(d) { return d.key; })
-                .style("font","25px times");
+                .text(function(d) { return d.key+1; })
+                .style("font","20px times") //the font size of the radial chart
+                .style("fill","white"); //the color of the radial chart 
             
             yAxis = g.append("g")
                 .attr("text-anchor", "end");
@@ -193,9 +194,20 @@ var Radialchart = function(){
             
             legend.append("text")
                 .attr("x", 24)
-                .attr("y", 9)
-                .attr("dy", "0.35em")
-                .text(function(d) { return d; }); 
+                .attr("y", 3.5)
+                .attr("dy", "0.60em")
+                .attr("fill","white")
+                .style("font","20px times")
+                .text(function(d) { return d; });
+
+            g.append("text")
+                .attr("x",-50)
+                .attr("y",-10)
+                .attr("dy",".70em")
+                .attr("fill","white")
+                .style("font","25px times")
+                .text("By Hour")
+
             }
             
         };

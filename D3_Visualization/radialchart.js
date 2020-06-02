@@ -30,6 +30,21 @@ var Radialchart = function(){
             groupKey1 = output[0]
             groupKey2 = output[1]
 
+            
+            if(groupKey1 == "hours" && groupKey2 == "ward"){
+                z = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+            }
+            else if (groupKey1 == "hours" && groupKey2 == "primary_type"){
+                z = d3.scaleOrdinal().range(d3.schemeSet1);
+            }
+            else if (groupKey1 == "hours" && groupKey2 == "location_description"){
+                z = d3.scaleOrdinal().range(d3.schemeTableau10);
+            }
+
+
+
+
+
             crime_total_count = gettotal(data, groupKey1)
             console.log("radial data length", data.length)
 
@@ -69,8 +84,8 @@ var Radialchart = function(){
             y = d3.scaleRadial()
                 .range([innerRadius, outerRadius]);
             
-            z = d3.scaleOrdinal()
-                .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+            // z = d3.scaleOrdinal()
+            //     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
                 
             x.domain(data.map(function(d) {  //gives the key aka ward number
        //         console.log("x.domina is",d.key)

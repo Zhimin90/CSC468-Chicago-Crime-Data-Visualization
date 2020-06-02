@@ -1,13 +1,14 @@
 
 
 var Crosstab = function () {
+    
     var chart = {
-        selector: function () {
+           selector: function () {
 
-            let data = [{ option: "Crime Type by Ward", value: "primary_type|ward" }
+            let data = [{ option: "Ward by Crime Type", value: "primary_type|ward" }
                 , { option: "Crime Type by Ward", value: "ward|primary_type"}
                 , { option: "Crime location by Ward", value: "ward|location_description"}]
-
+             
             var ctSelector = d3.select("div.crosstabchart")
                 .append("select")
                 .attr("id", "crosstabselector")
@@ -24,6 +25,7 @@ var Crosstab = function () {
         },
 
         barchart: function (svg, data) {
+            
             if (data.length === 0) {
                 return
             }
@@ -33,6 +35,23 @@ var Crosstab = function () {
 
             groupKey1 = output[0]
             groupKey2 = output[1]
+
+
+            // color = d3.scaleOrdinal()
+            //     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+
+            // color = d3.scaleOrdinal().range(d3.schemeSet3);
+
+            if(groupKey1 == "primary_type" && groupKey2 == "ward"){
+                color = d3.scaleOrdinal().range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+            }
+            else if (groupKey1 == "ward" && groupKey2 == "primary_type"){
+                color = d3.scaleOrdinal().range(d3.schemeSet1);
+            }
+            else if (groupKey1 == "ward" && groupKey2 == "location_description"){
+                color = d3.scaleOrdinal().range(d3.schemeTableau10);
+            }
+
 
             //console.log("in crosstab, data: ", data)
             //data grouping
@@ -94,8 +113,7 @@ var Crosstab = function () {
                 .domain([0, d3.max(data, d => d3.max(keys, key => d[key]))]).nice()
                 .rangeRound([height - margin.bottom, margin.top])
 
-            color = d3.scaleOrdinal()
-                .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
+
             
             xAxis = g => g
                 .attr("transform", `translate(0,${height - margin.bottom})`)

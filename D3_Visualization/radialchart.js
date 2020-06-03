@@ -98,6 +98,7 @@ var Radialchart = function(){
             
             stackedData = d3.stack().keys(keys)(data)
 
+            //to help add in the ward information to pass it to tooltip
             stackedData.forEach(
                 layer1=>{
                     layer1.forEach(
@@ -142,10 +143,11 @@ var Radialchart = function(){
 
             yAxis = g.append("g")
                 .attr("text-anchor", "end");
-
+            
+            //changed y.ticks from 10 to 3 to make legend more clean
             yTick = yAxis
                 .selectAll("g")
-                .data(y.ticks(10).slice(1))
+                .data(y.ticks(3).slice(1))
                 .enter().append("g");
 
             //console.log("stackedData", stackedData)
@@ -168,9 +170,13 @@ var Radialchart = function(){
                 .attr("x2", -5)
                 .attr("stroke", "#FFF");
             
+            //text of the clock numbers
             label.append("text")
                 .attr("transform", function(d) { return (x(d.key) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI ? "rotate(90)translate(0,21)" : "rotate(-90)translate(0,-9)"; })
-                .text(function(d) { return d.key+1; })
+                .text(function(d) { 
+                    if((d.key+1) % 2 != 0){
+                        return d.key+1; }
+                    })
                 .style("font","20px times") //the font size of the radial chart
                 .style("fill","white"); //the color of the radial chart 
             

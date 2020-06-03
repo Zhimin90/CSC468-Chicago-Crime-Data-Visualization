@@ -195,7 +195,7 @@ function runMapbox(map,crimeData) {
 
     //Below is the code for the toggle on/off buttons for the different categories: heatmap, crimes-point, and crime category labels
     //documentation via https://docs.mapbox.com/mapbox-gl-js/example/toggle-layers/
-    var toggleableLayerIds = ['crimes-heat','crimes-point','crime-category-labels'];     // enumerate ids of the layers
+    var toggleableLayerIds = ['crime-heatmap','crime-location','crime-category'];     // enumerate ids of the layers
     
     // set up the corresponding toggle button for each layer
     for (var i = 0; i < toggleableLayerIds.length; i++) {

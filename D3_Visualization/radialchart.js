@@ -120,10 +120,12 @@ var Radialchart = function () {
       });
 
       stackedData.forEach((val, shifti) => {
-        console.log("i is: ", shifti);
-
-        g.append("g")
-          .attr("transform", "translate(" + shifti * 40 + ",0)")
+        g_sub = g.append("g");
+        g_sub.attr("class", "radialPiece");
+        g_sub
+          .append("g")
+          //.attr("class", "radialPiece")
+          //.attr("transform", "translate(" + shifti * 40 + ",0)")
           .selectAll("g")
           .data([val]) //data.columns.slice(1) =keys
           .enter()
@@ -161,9 +163,9 @@ var Radialchart = function () {
           .on("mousemove", mousemove)
           .on("mouseleave", mouseleave);
 
-        yAxis = g
+        yAxis = g_sub
           .append("g")
-          .attr("transform", "translate(" + shifti * 40 + ",0)")
+          //.attr("transform", "translate(" + shifti * 40 + ",0)")
           .attr("text-anchor", "end");
 
         yTick = yAxis
@@ -180,9 +182,9 @@ var Radialchart = function () {
           .attr("stroke-opacity", 0.25)
           .attr("r", y);
 
-        label = g
+        label = g_sub
           .append("g")
-          .attr("transform", "translate(" + shifti * 40 + ",0)")
+          //.attr("transform", "translate(" + shifti * 40 + ",0)")
           .selectAll("g")
           .data(data)
           .enter()
@@ -244,7 +246,7 @@ var Radialchart = function () {
                 .attr("dy", "-1em")
                 .text("Population");*/
 
-        legend = g
+        legend = g_sub
           .append("g")
           .selectAll("g")
           .data(keys.reverse()) //data.columns.slice(1) =keys
@@ -271,7 +273,8 @@ var Radialchart = function () {
             return d;
           });
 
-        g.append("text")
+        g_sub
+          .append("text")
           .attr("x", -50)
           .attr("y", -10)
           .attr("dy", ".70em")
@@ -279,6 +282,18 @@ var Radialchart = function () {
           .style("font", "25px times")
           .text("By Hour");
       }); //forEach End
+
+      svg
+        .append("rect")
+        .on("mouseenter", mouseenterradial)
+        .on("mousemove", mousemoveradial)
+        .on("mouseleave", mouseleaveradial)
+        .classed("background", true)
+        .attr("y", 0)
+        .attr("x", 0)
+        .attr("height", height)
+        .attr("width", width)
+        .style("opacity", "0%");
     },
   };
 
@@ -294,6 +309,50 @@ var Radialchart = function () {
     .style("border-radius", "5px")
     .style("padding", "5px")
     .style("position", "absolute");
+
+  var ex;
+  var ey;
+
+  function mouseenterradial() {
+    var ecoordinates = d3.mouse(this);
+    ex = ecoordinates[0];
+    ey = ecoordinates[1];
+    console.log("Entered Radial here");
+  }
+
+  function shiftonindex(i, ex, x) {
+    return ((1 / 5) * (i * 200 + (x - ex) * 10 * i)).toFixed(2);
+  }
+
+  function mouseleaveradial() {
+    var ecoordinates = d3.mouse(this);
+    ex = 0;
+    ey = 0;
+    let G = document.getElementsByClassName("radialPiece");
+
+    Array.from(G).forEach((radialChart, i) => {
+      radialChart.setAttribute(
+        "transform",
+        `translate(${shiftonindex(i, ex, 0)}, 0)`
+      );
+    });
+    console.log("Left Radial");
+  }
+
+  function mousemoveradial() {
+    //console.log()
+    var coordinates = d3.mouse(this);
+    var x = coordinates[0];
+    var y = coordinates[1];
+    let G = document.getElementsByClassName("radialPiece");
+
+    Array.from(G).forEach((radialChart, i) => {
+      radialChart.setAttribute(
+        "transform",
+        `translate(${shiftonindex(i, ex, x)}, 0)`
+      );
+    });
+  }
 
   function mouseover() {
     Tooltip.style("opacity", 0.8);

@@ -54,7 +54,7 @@ d3.json(bound_url, function (err, data) {
     dispatchSelected
         .on("selected", function (data) {
             //get clientHeight
-            padding = 200
+            padding = screen.height / 8
             var h = screen.height/ 3 - padding;
             console.log("h: ", h)
 
@@ -126,7 +126,8 @@ d3.json(bound_url, function (err, data) {
     dispatchDeselected
         .on("deselected", function (data) {
             //get clientHeight
-            var h = document.getElementById('chartpanelid').clientHeight / 3;
+            padding = screen.height / 8
+            var h = screen.height / 3 - padding;
             console.log("h: ", h)
 
             console.log("Dispatching deselect...", data)
@@ -144,7 +145,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart", true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", h)
+                .attr("height", h + padding / 2)
 
             crosstab = Crosstab()
             crosstab.barchart(barSvg, selectedValues.flat())
@@ -155,7 +156,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "linesvg")
                 .attr("width",800)
-                .attr("height", h)
+                .attr("height", h + padding / 2)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());

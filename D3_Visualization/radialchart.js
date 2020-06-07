@@ -319,12 +319,8 @@ var Radialchart = function () {
   }
 
   function shiftonindex(i, ex, x) {
-    return ((1 / 10) * (i * 200 + (x - ex) * 10 * i)).toFixed(2);
+    return ((1 / 10) * (i * 500 + (x - ex) * 10 * i) - .3 * (x-ex)).toFixed(2);
   }
-
-    function shiftonindex(i, ex, x) {
-        return ((1 / 10) * (i * 200 + (x - ex) * 10 * i)).toFixed(2);
-    }
 
   function mouseleaveradial() {
 

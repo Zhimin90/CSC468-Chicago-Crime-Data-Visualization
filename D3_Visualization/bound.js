@@ -34,13 +34,25 @@ var dispatchSelected = d3.dispatch("selected");
 var dispatchDeselected = d3.dispatch("deselected");
 var selectedWards = {}
 
+var savedData
+
+function isEmpty(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+
 //Fetch Ward Bounds
 d3.json(bound_url, function (err, data) {
+    
     //console.log(data)
     let wardD3 = new D3WardB(data);
 
     dispatchSelected
         .on("selected", function (data) {
+            if (isEmpty(data)) { data = savedData } else { savedData = data }
             console.log("Dispatching select...", data)
             //Aggregate Selected Wards Data
             let clickedWard = geojson.features.filter(val => val.properties.ward === data.properties.ward)
@@ -55,8 +67,12 @@ d3.json(bound_url, function (err, data) {
             crosstab = Crosstab()
 
             if (d3.select("#crosstabselector").empty()){
-                crosstab.selector()    //selector must be on top
+                crosstab.selector()
+                d3.select("#crosstabselector").on("click", d => {
+                    dispatchSelected.call("selected", {}, {})
+                })    //selector must be on top
             }
+
             //create svg for crosstab
             d3.select("svg.crosstabchart").remove()
             var barSvg = d3.select("body").select("div.crosstabchart")
@@ -85,7 +101,10 @@ d3.json(bound_url, function (err, data) {
             
             radialgraph=Radialchart()
             if (d3.select("#radialselector").empty()) {
-                radialgraph.selector()    //selector must be on top
+                radialgraph.selector()
+                d3.select("#radialselector").on("click", d => {
+                    dispatchSelected.call("selected", {}, {})
+                })    //selector must be on top
             }
             d3.select("svg.radialchart").remove()
             var radialSvg = d3.select("body").select("div.radialchart")

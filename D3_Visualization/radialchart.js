@@ -120,14 +120,14 @@ var Radialchart = function () {
         });
       });
 
-      legend = g
+      legend = svg
         .append("g")
         .selectAll("g")
         .data(keys.reverse()) //data.columns.slice(1) =keys
         .enter()
         .append("g")
         .attr("transform", function (d, i) {
-          return "translate(-270," + (i - (keys.length - 1) / 2) * 20 + ")";
+          return "translate(0," + ((i - (keys.length - 1) / 2) * 20 + 100) + ")";
         });
 
       legend
@@ -146,6 +146,9 @@ var Radialchart = function () {
         .text(function (d) {
           return d;
         });
+
+        legend.style("float", "left")
+
 
       stackedData.forEach((val, shifti) => {
         g_sub = g.append("g");
@@ -321,7 +324,7 @@ var Radialchart = function () {
     return (
       (1 / 10) * (i * 500 + (x - ex) * 10 * i) -
       0.3 * (x - ex) -
-      100
+      300
     ).toFixed(2);
   }
 

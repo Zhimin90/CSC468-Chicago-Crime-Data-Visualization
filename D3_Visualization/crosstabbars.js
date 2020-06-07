@@ -144,7 +144,7 @@ var Crosstab = function () {
                 .attr("class", "axisWhite")
                 .style("opacity", 0.3)
                 .call(make_y_gridlines()
-                    .tickSize(-width)
+                    .tickSize(-width + margin.left)
                     .tickFormat("")
                 )
             

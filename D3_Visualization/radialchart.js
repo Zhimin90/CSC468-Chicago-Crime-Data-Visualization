@@ -121,6 +121,32 @@ var Radialchart = function () {
         });
       });
 
+    legend = g
+        .append("g")
+        .selectAll("g")
+        .data(keys.reverse()) //data.columns.slice(1) =keys
+        .enter()
+        .append("g")
+        .attr("transform", function (d, i) {
+            return "translate(-250," + (i - (keys.length - 1) / 2) * 20 + ")";
+        });
+
+    legend
+        .append("rect")
+        .attr("width", 19)
+        .attr("height", 16)
+        .attr("fill", z);
+
+    legend
+        .append("text")
+        .attr("x", 24)
+        .attr("y", 3.5)
+        .attr("dy", "0.60em")
+        .attr("fill", "white")
+        .style("font", "20px times")
+        .text(function (d) {
+            return d;
+        })
 
       stackedData.forEach((val, shifti) => {
         g_sub = g.append("g");
@@ -254,32 +280,7 @@ var Radialchart = function () {
 
       }); //forEach End 
 
-      legend = g_sub
-      .append("g")
-      .selectAll("g")
-      .data(keys.reverse()) //data.columns.slice(1) =keys
-      .enter()
-      .append("g")
-      .attr("transform", function (d, i) {
-        return "translate(300," + (i - (keys.length - 1) / 2) * 20 + ")";
-      });
-
-    legend
-      .append("rect")
-      .attr("width", 19)
-      .attr("height", 16)
-      .attr("fill", z);
-
-    legend
-      .append("text")
-      .attr("x", 24)
-      .attr("y", 3.5)
-      .attr("dy", "0.60em")
-      .attr("fill", "white")
-      .style("font", "20px times")
-      .text(function (d) {
-        return d;
-      })
+      
       svg
         .append("rect")
         .on("mouseenter", mouseenterradial)

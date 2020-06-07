@@ -53,6 +53,8 @@ def getUpdatedCrimeData():
     results_df = pd.DataFrame.from_records(results)
     results_df = results_df[results_df.primary_type.isin(
         results_df.primary_type.value_counts()[:6].index)]
+    results_df = results_df[results_df.location_description.isin(
+        results_df.location_description.value_counts()[:6].index)]
         
     test_df = results_df
     xbound = (-87.9361, -87.5245)
@@ -60,6 +62,7 @@ def getUpdatedCrimeData():
 
     test_df = test_df[test_df.latitude.notna()].sort_values([
         'date'], ascending=[0])
+
     test_df['date'] = pd.to_datetime(test_df['date'])
     test_df['updated_on'] = pd.to_datetime(test_df['updated_on'])
     test_df['latitude'] = pd.to_numeric(test_df['latitude'])

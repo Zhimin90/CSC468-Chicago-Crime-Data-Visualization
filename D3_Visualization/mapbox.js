@@ -18,9 +18,9 @@ function runMapbox(map,crimeData) {
     //Mapbox crime date filter
     function filterBy(startMonth, endMonth) {
         var filters = ['all', ['>=', 'month', startMonth], ['<=', 'month', endMonth]];
-        map.setFilter('crimes-point', filters);
-        map.setFilter('crimes-heat', filters);
-        map.setFilter('crime-category-labels', filters);
+        map.setFilter('crime-location', filters);
+        map.setFilter('crime-heatmap', filters);
+        map.setFilter('crime-category', filters);
 
         // Set the label to the month
         //document.getElementById('month').textContent = months[month];
@@ -34,7 +34,7 @@ function runMapbox(map,crimeData) {
     });
     // add heatmap layer here
     map.addLayer({
-        id: 'crimes-heat',
+        id: 'crime-heatmap',
         type: 'heatmap',
         source: 'crimes',
 
@@ -92,7 +92,7 @@ function runMapbox(map,crimeData) {
     }, 'waterway-label');
     // add circle layer here
     map.addLayer({
-        id: 'crimes-point',
+        id: 'crime-location',
         type: 'circle',
         source: 'crimes',
         minzoom: 14,
@@ -134,7 +134,7 @@ function runMapbox(map,crimeData) {
     }, 'waterway-label');
 
     map.addLayer({
-        'id': 'crime-category-labels',
+        'id': 'crime-category',
         'type': 'symbol',
         'source': 'crimes',
         'layout': {
@@ -195,7 +195,7 @@ function runMapbox(map,crimeData) {
 
     //Below is the code for the toggle on/off buttons for the different categories: heatmap, crimes-point, and crime category labels
     //documentation via https://docs.mapbox.com/mapbox-gl-js/example/toggle-layers/
-    var toggleableLayerIds = ['crimes-heat','crimes-point','crime-category-labels'];     // enumerate ids of the layers
+    var toggleableLayerIds = ['crime-heatmap','crime-location','crime-category'];     // enumerate ids of the layers
     
     // set up the corresponding toggle button for each layer
     for (var i = 0; i < toggleableLayerIds.length; i++) {

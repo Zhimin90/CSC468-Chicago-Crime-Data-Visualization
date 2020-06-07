@@ -65,15 +65,15 @@ var Radialchart = function () {
       data = dataGrouped;
       console.log("data", data);
 
-      (width = +svg.attr("width")),
-        (height = +svg.attr("height")),
-        (innerRadius = 125),
-        (outerRadius = Math.min(width, height) * 0.5),
+      (width = +svg.attr("width")-50),
+        (height = +svg.attr("height")-50),
+        (innerRadius = 115),
+        (outerRadius = Math.min(width, height) * 0.6),
         (g = svg
           .append("g")
           .attr(
             "transform",
-            "translate(" + width * 0.4 + "," + height * 0.5 + ")"
+            "translate(" + width * 0.24 + "," + height * 0.5 + ")" //the start of the first radial
           ));
 
       x = d3
@@ -121,9 +121,9 @@ var Radialchart = function () {
 
       stackedData.forEach((val, shifti) => {
         console.log("i is: ", shifti);
-
+        
         g.append("g")
-          .attr("transform", "translate(" + shifti * 40 + ",0)")
+          .attr("transform", "translate(" + shifti * 200 + ",0)")
           .selectAll("g")
           .data([val]) //data.columns.slice(1) =keys
           .enter()
@@ -155,7 +155,7 @@ var Radialchart = function () {
                 return x(d.data.key) + x.bandwidth();
               }) //d.data.State = key
               .padAngle(0.01)
-              .padRadius(innerRadius)
+              .padRadius(100)
           )
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
@@ -163,12 +163,13 @@ var Radialchart = function () {
 
         yAxis = g
           .append("g")
-          .attr("transform", "translate(" + shifti * 40 + ",0)")
+          .attr("transform", "translate(" + shifti * 200 + ",0)")
           .attr("text-anchor", "end");
 
+        //changed y.ticks from 10 to 3 to make legend more clean
         yTick = yAxis
           .selectAll("g")
-          .data(y.ticks(10).slice(1))
+          .data(y.ticks(0).slice(1))
           .enter()
           .append("g");
 
@@ -180,9 +181,10 @@ var Radialchart = function () {
           .attr("stroke-opacity", 0.25)
           .attr("r", y);
 
+
         label = g
           .append("g")
-          .attr("transform", "translate(" + shifti * 40 + ",0)")
+          .attr("transform", "translate(" + shifti * 200 + ",0)")
           .selectAll("g")
           .data(data)
           .enter()
@@ -210,9 +212,10 @@ var Radialchart = function () {
               ? "rotate(90)translate(0,21)"
               : "rotate(-90)translate(0,-9)";
           })
-          .text(function (d) {
-            return d.key + 1;
-          })
+          .text(function(d) { 
+            if((d.key+1) % 2 != 0){
+                return d.key+1; }
+            })
           .style("font", "20px times") //the font size of the radial chart
           .style("fill", "white"); //the color of the radial chart
 
@@ -244,41 +247,44 @@ var Radialchart = function () {
                 .attr("dy", "-1em")
                 .text("Population");*/
 
-        legend = g
-          .append("g")
-          .selectAll("g")
-          .data(keys.reverse()) //data.columns.slice(1) =keys
-          .enter()
-          .append("g")
-          .attr("transform", function (d, i) {
-            return "translate(300," + (i - (keys.length - 1) / 2) * 20 + ")";
-          });
-
-        legend
-          .append("rect")
-          .attr("width", 19)
-          .attr("height", 16)
-          .attr("fill", z);
-
-        legend
-          .append("text")
-          .attr("x", 24)
-          .attr("y", 3.5)
-          .attr("dy", "0.60em")
-          .attr("fill", "white")
-          .style("font", "20px times")
-          .text(function (d) {
-            return d;
-          });
-
+     /*   //for the By Hour
         g.append("text")
           .attr("x", -50)
           .attr("y", -10)
           .attr("dy", ".70em")
           .attr("fill", "white")
           .style("font", "25px times")
-          .text("By Hour");
+          .text("By Hour"); */
       }); //forEach End
+      legend = g
+      .append("g")
+      .selectAll("g")
+      .data(keys.reverse()) //data.columns.slice(1) =keys
+      .enter()
+      .append("g")
+      .attr("transform", function (d, i) {
+        return "translate(360," + (i - (keys.length - 1) / 2) * 20 + ")";
+      });
+
+    legend
+      .append("rect")
+      .attr("width", 19)
+      .attr("height", 16)
+      .attr("fill", z);
+
+    //double check below line
+    d3.selectAll("radialSvg").classed("radialchart",false) 
+
+    legend
+      .append("text")
+      .attr("x", 24)
+      .attr("y", 3.5)
+      .attr("dy", "0.60em")
+      .attr("fill", "white")
+      .style("font", "20px times")
+      .text(function (d) {
+        return d;
+      })
     },
   };
 
@@ -306,21 +312,27 @@ var Radialchart = function () {
   // {ASSAULT:41,THEFT:208,MOTOR VEHICLE THEFT:}
 
   function mousemove(d) {
-    total = 0;
     target = d[1];
-    keyname = "nothing";
-    value = "nothing";
+    keyname = "";
+    value = "";
 
+    //console.log("d is",d)
+    //console.log("target is",d[1])
     for (i in d.data) {
+      total = 0;
       if (i != "key") {
         //console.log("key is ",i + " value is:"+d.data[i])
-        total += d.data[i];
+        total += d.data[i]
+        //console.log("the total is",total)
         if (total == target) {
-          //  console.log("total is",total)
+            //console.log("total is",total)
           keyname = i;
-          value = d.data[i];
-          //  console.log("keyname",keyname)
-          //  console.log("value",value)
+          value = d.data[i]
+          if (keyname.length <= 2){ //this is to determine if the key is ward number so we can append "ward" designation to tool tip
+            keyname = "ward "+keyname
+          }
+            console.log("keyname",keyname)
+            console.log("value",value)
           break;
         }
       }

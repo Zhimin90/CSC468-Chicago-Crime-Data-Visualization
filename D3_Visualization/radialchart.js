@@ -53,7 +53,7 @@ var Radialchart = function () {
         z = d3.scaleOrdinal().range(d3.schemeTableau10);
       }
 
-      crime_total_count = gettotal(data, groupKey1);
+      
       //console.log("radial data length", data.length);
 
       //data grouping
@@ -61,7 +61,9 @@ var Radialchart = function () {
       console.log("group in radial by is", dataGrouped);
 
       keys = getUnique(data, groupKey2);
-
+      
+      crime_total_count = gettotal(data, groupKey1, groupKey2)
+      console.log('crime_total', crime_total_count)
       data = dataGrouped;
       console.log("data", data);
 
@@ -119,10 +121,46 @@ var Radialchart = function () {
         });
       });
 
+        g.append("text")
+            .attr("x", -50)
+            .attr("y", -10)
+            .attr("dy", ".70em")
+            .attr("fill", "white")
+            .style("font", "25px times")
+            .text("By Hour");
+        legend = g
+            .append("g")
+            .selectAll("g")
+            .data(keys.reverse()) //data.columns.slice(1) =keys
+            .enter()
+            .append("g")
+            .attr("transform", function (d, i) {
+                return "translate(300," + (i - (keys.length - 1) / 2) * 20 + ")";
+            });
+
+        legend
+            .append("rect")
+            .attr("width", 19)
+            .attr("height", 16)
+            .attr("fill", z);
+
+        legend
+            .append("text")
+            .attr("x", 24)
+            .attr("y", 3.5)
+            .attr("dy", "0.60em")
+            .attr("fill", "white")
+            .style("font", "20px times")
+            .text(function (d) {
+                return d;
+            });
+
       stackedData.forEach((val, shifti) => {
         g_sub = g.append("g");
+          
         g_sub.attr("class", "radialPiece");
         g_sub
+          .attr("transform", "translate(" + shiftonindex(shifti, 0, 0) +",0)")
           .append("g")
           //.attr("class", "radialPiece")
           //.attr("transform", "translate(" + shifti * 40 + ",0)")
@@ -246,42 +284,7 @@ var Radialchart = function () {
                 .attr("dy", "-1em")
                 .text("Population");*/
 
-        legend = g_sub
-          .append("g")
-          .selectAll("g")
-          .data(keys.reverse()) //data.columns.slice(1) =keys
-          .enter()
-          .append("g")
-          .attr("transform", function (d, i) {
-            return "translate(300," + (i - (keys.length - 1) / 2) * 20 + ")";
-          });
-
-        legend
-          .append("rect")
-          .attr("width", 19)
-          .attr("height", 16)
-          .attr("fill", z);
-
-        legend
-          .append("text")
-          .attr("x", 24)
-          .attr("y", 3.5)
-          .attr("dy", "0.60em")
-          .attr("fill", "white")
-          .style("font", "20px times")
-          .text(function (d) {
-            return d;
-          });
-
-        g_sub
-          .append("text")
-          .attr("x", -50)
-          .attr("y", -10)
-          .attr("dy", ".70em")
-          .attr("fill", "white")
-          .style("font", "25px times")
-          .text("By Hour");
-      }); //forEach End
+      }); //forEach End 
 
       svg
         .append("rect")
@@ -321,21 +324,15 @@ var Radialchart = function () {
   }
 
   function shiftonindex(i, ex, x) {
-    return ((1 / 5) * (i * 200 + (x - ex) * 10 * i)).toFixed(2);
+    return ((1 / 10) * (i * 200 + (x - ex) * 10 * i)).toFixed(2);
   }
 
-  function mouseleaveradial() {
-    var ecoordinates = d3.mouse(this);
-    ex = 0;
-    ey = 0;
-    let G = document.getElementsByClassName("radialPiece");
+    function shiftonindex(i, ex, x) {
+        return ((1 / 10) * (i * 200 + (x - ex) * 10 * i)).toFixed(2);
+    }
 
-    Array.from(G).forEach((radialChart, i) => {
-      radialChart.setAttribute(
-        "transform",
-        `translate(${shiftonindex(i, ex, 0)}, 0)`
-      );
-    });
+  function mouseleaveradial() {
+
     console.log("Left Radial");
   }
 
@@ -437,15 +434,37 @@ var Radialchart = function () {
     return unique;
   }
 
-  function gettotal(data, key) {
-    uniqueKey = getUnique(data, key);
-    crimeCount = uniqueKey.map((val1) => {
-      dataOnlykey = data.filter((val2) => val2.properties[key] === val1);
-      count = dataOnlykey.length;
-      //console.log("count", count)
-      return count;
-    });
-    return Math.max(...crimeCount);
+  function gettotal(data, key1, key2) {
+      let uniqueKey1s = getUnique(data, key1).sort((a, b) => a - b);
+      let uniqueKey2s = getUnique(data, key2);
+      //console.log("uniqueKey1s: ", uniqueKey1s)
+      //let dict1 = {}
+      dict1 = uniqueKey1s.map((val1) => {
+          //console.log(val1);
+          return { key: val1 };
+      });
+      //dict1 = dict1.sortBy('key');;
+      //console.log("dict1: ", dict1);
+      //console.log(dict)
+      max = 0
+      index = 0;
+      uniqueKey1s.forEach((key1Value) => {
+          dataOnlykey1 = data.filter((val) => val.properties[key1] === key1Value);
+          uniqueKey2s.forEach((key2Value) => {
+              listOfValue = dataOnlykey1.filter(
+                  (val) => val.properties[key2] === key2Value
+              );
+              count = listOfValue.length;
+              //console.log('count', count)
+              if (key1Value === dict1[index].key) {
+                  dict1[index][key2Value] = count;
+                  if (count > max){ max = count}
+              }
+          });
+          index++;
+      });
+      //console.log("max: ", max)
+      return max;
   }
 
   //unused function to take the top K keys instead of all them.

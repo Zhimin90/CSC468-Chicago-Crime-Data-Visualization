@@ -170,7 +170,7 @@ var Radialchart = function () {
 
         yTick = yAxis
           .selectAll("g")
-          .data(y.ticks(10).slice(1))
+          .data(y.ticks(3).slice(1)) //changed y.ticks from 10 to 3 to maek legend more clean
           .enter()
           .append("g");
 
@@ -212,9 +212,10 @@ var Radialchart = function () {
               ? "rotate(90)translate(0,21)"
               : "rotate(-90)translate(0,-9)";
           })
-          .text(function (d) {
-            return d.key + 1;
-          })
+          .text(function(d) {  //changed 24 hour clock to only show odd hours
+            if((d.key+1) % 2 != 0){
+                return d.key+1; }
+            })
           .style("font", "20px times") //the font size of the radial chart
           .style("fill", "white"); //the color of the radial chart
 
@@ -246,43 +247,34 @@ var Radialchart = function () {
                 .attr("dy", "-1em")
                 .text("Population");*/
 
-        legend = g_sub
-          .append("g")
-          .selectAll("g")
-          .data(keys.reverse()) //data.columns.slice(1) =keys
-          .enter()
-          .append("g")
-          .attr("transform", function (d, i) {
-            return "translate(300," + (i - (keys.length - 1) / 2) * 20 + ")";
-          });
-
-        legend
-          .append("rect")
-          .attr("width", 19)
-          .attr("height", 16)
-          .attr("fill", z);
-
-        legend
-          .append("text")
-          .attr("x", 24)
-          .attr("y", 3.5)
-          .attr("dy", "0.60em")
-          .attr("fill", "white")
-          .style("font", "20px times")
-          .text(function (d) {
-            return d;
-          });
-
-        g_sub
-          .append("text")
-          .attr("x", -50)
-          .attr("y", -10)
-          .attr("dy", ".70em")
-          .attr("fill", "white")
-          .style("font", "25px times")
-          .text("By Hour");
       }); //forEach End
 
+      legend = g_sub
+      .append("g")
+      .selectAll("g")
+      .data(keys.reverse()) //data.columns.slice(1) =keys
+      .enter()
+      .append("g")
+      .attr("transform", function (d, i) {
+        return "translate(300," + (i - (keys.length - 1) / 2) * 20 + ")";
+      });
+
+    legend
+      .append("rect")
+      .attr("width", 19)
+      .attr("height", 16)
+      .attr("fill", z);
+
+    legend
+      .append("text")
+      .attr("x", 24)
+      .attr("y", 3.5)
+      .attr("dy", "0.60em")
+      .attr("fill", "white")
+      .style("font", "20px times")
+      .text(function (d) {
+        return d;
+      })
       svg
         .append("rect")
         .on("mouseenter", mouseenterradial)

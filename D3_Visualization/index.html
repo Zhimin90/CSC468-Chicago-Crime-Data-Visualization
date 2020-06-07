@@ -279,6 +279,7 @@
       //Load from mapbox.js
       runMapbox(map, data);
 
+      
       //Remove Loading screen and add div boxes for charts
       d3.select("#loading").remove()
       d3.select('body')
@@ -286,11 +287,12 @@
         .attr('class', 'chartpanel')
         .style('display', 'none')
         .attr('id', 'chartpanelid')
-      
+
       d3.select('div.chartpanel')
         .append('div')
         .attr('class', 'crosstabchart')
         .attr('id', 'ctcdivid')
+
 
       d3.select('div.chartpanel')
         .append('br')
@@ -300,10 +302,12 @@
         .attr('class', 'linechart')
         .attr('id', 'lcdivid')
 
+
       d3.select('div.chartpanel')
         .append('div')
         .attr('class', 'radialchart')
         .attr('id', 'rcdivid')
+
 
       //load from bound.js
       runD3(data);

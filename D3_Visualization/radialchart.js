@@ -58,18 +58,18 @@ var Radialchart = function () {
 
       //data grouping
       dataGrouped = groupBy(data, groupKey1, groupKey2);
-      console.log("group in radial by is", dataGrouped);
+     //console.log("group in radial by is", dataGrouped);
 
       keys = getUnique(data, groupKey2);
       
       crime_total_count = gettotal(data, groupKey1, groupKey2)
-      console.log('crime_total', crime_total_count)
+     //console.log('crime_total', crime_total_count)
       data = dataGrouped;
-      console.log("data", data);
+     //console.log("data", data);
 
       (width = +svg.attr("width")),
         (height = +svg.attr("height")),
-        (innerRadius = 125),
+          (innerRadius = height/3.5), //125
         (outerRadius = Math.min(width, height) * 0.5),
         (g = svg
           .append("g")
@@ -100,7 +100,7 @@ var Radialchart = function () {
 
       z.domain(keys); //data.columns.slice(1) =keys
       //console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data))
-      console.log("data before stacked", data);
+     //console.log("data before stacked", data);
       var index = 0;
       stackedData = keys.map((d) => {
         hr = Object.keys(data);
@@ -114,7 +114,7 @@ var Radialchart = function () {
         return hr;
         index++;
       }); //d3.stack().keys(keys)(data);
-      console.log("stackedData", stackedData);
+     //console.log("stackedData", stackedData);
       stackedData.forEach((layer1) => {
         layer1.forEach((layer2) => {
           layer2.key0 = +layer1.key;
@@ -128,7 +128,7 @@ var Radialchart = function () {
         .enter()
         .append("g")
         .attr("transform", function (d, i) {
-            return "translate(-250," + (i - (keys.length - 1) / 2) * 20 + ")";
+            return "translate(-270," + (i - (keys.length - 1) / 2) * 20 + ")";
         });
 
     legend
@@ -315,7 +315,7 @@ var Radialchart = function () {
     var ecoordinates = d3.mouse(this);
     ex = ecoordinates[0];
     ey = ecoordinates[1];
-    console.log("Entered Radial here");
+   //console.log("Entered Radial here");
   }
 
   function shiftonindex(i, ex, x) {
@@ -324,7 +324,7 @@ var Radialchart = function () {
 
   function mouseleaveradial() {
 
-    console.log("Left Radial");
+   //console.log("Left Radial");
   }
 
   function mousemoveradial() {
@@ -479,18 +479,18 @@ var Radialchart = function () {
       sortable = sortable.slice(sortable.length - k, sortable.length - 1);
 
       sortable.push(["key", test["key"]]);
-      console.log("new sortable is", sortable);
+     //console.log("new sortable is", sortable);
 
       objSorted = {};
       sortable.forEach(function (item) {
         if (item[0] != "key" && !keys.includes(item[0])) {
-          console.log("the item[0] is", item[0]);
+         //console.log("the item[0] is", item[0]);
           keys.push(item[0]);
         }
         objSorted[item[0]] = item[1];
       });
-      console.log("keys", keys);
-      console.log("the new sort is ", objSorted);
+     //console.log("keys", keys);
+     //console.log("the new sort is ", objSorted);
 
       data = objSorted;
       testdata.push(objSorted);

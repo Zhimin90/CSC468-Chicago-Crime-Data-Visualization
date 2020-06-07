@@ -49,9 +49,15 @@ d3.json(bound_url, function (err, data) {
     
     //console.log(data)
     let wardD3 = new D3WardB(data);
+    
 
     dispatchSelected
         .on("selected", function (data) {
+            //get clientHeight
+            padding = 200
+            var h = screen.height/ 3 - padding;
+            console.log("h: ", h)
+
             if (isEmpty(data)) { data = savedData } else { savedData = data }
             console.log("Dispatching select...", data)
             //Aggregate Selected Wards Data
@@ -80,7 +86,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart",true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", 395)
+                .attr("height", h + padding/2)
 
             
             crosstab.barchart(barSvg,selectedValues.flat())
@@ -92,7 +98,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "linesvg")
                 .attr("width",800)
-                .attr("height", 390)
+                .attr("height", h + padding/2)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
@@ -111,7 +117,7 @@ d3.json(bound_url, function (err, data) {
                 .append("svg")
                 .classed("radialchart", true)
                 .attr("width", 690)
-                .attr("height", 375)
+                .attr("height", h)
             radialgraph.drawRadialChart(radialSvg,selectedValues.flat())
             
         });
@@ -119,6 +125,10 @@ d3.json(bound_url, function (err, data) {
 
     dispatchDeselected
         .on("deselected", function (data) {
+            //get clientHeight
+            var h = document.getElementById('chartpanelid').clientHeight / 3;
+            console.log("h: ", h)
+
             console.log("Dispatching deselect...", data)
 
             delete selectedWards[data.properties.ward]
@@ -134,7 +144,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("crosstabchart", true)
                 .attr("id", "bar")
                 .attr("width", 800)
-                .attr("height", 395)
+                .attr("height", h)
 
             crosstab = Crosstab()
             crosstab.barchart(barSvg, selectedValues.flat())
@@ -145,7 +155,7 @@ d3.json(bound_url, function (err, data) {
                 .classed("linechart", true)
                 .attr("id", "linesvg")
                 .attr("width",800)
-                .attr("height", 390)
+                .attr("height", h)
 
             linegraph = Linechart();
             linegraph.drawChart(lineSvg,selectedValues.flat());
@@ -155,7 +165,7 @@ d3.json(bound_url, function (err, data) {
             .append("svg")
             .classed("radialchart",true)
             .attr("width",700) //690
-            .attr("height",400) //375
+            .attr("height", h) //375
             
             radialgraph=Radialchart()
             radialgraph.drawRadialChart(radialSvg,selectedValues.flat())

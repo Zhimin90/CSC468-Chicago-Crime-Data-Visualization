@@ -53,23 +53,22 @@ var Radialchart = function () {
         z = d3.scaleOrdinal().range(d3.schemeTableau10);
       }
 
-      
       //console.log("radial data length", data.length);
 
       //data grouping
       dataGrouped = groupBy(data, groupKey1, groupKey2);
-     //console.log("group in radial by is", dataGrouped);
+      //console.log("group in radial by is", dataGrouped);
 
       keys = getUnique(data, groupKey2);
-      
-      crime_total_count = gettotal(data, groupKey1, groupKey2)
-     //console.log('crime_total', crime_total_count)
+
+      crime_total_count = gettotal(data, groupKey1, groupKey2);
+      //console.log('crime_total', crime_total_count)
       data = dataGrouped;
-     //console.log("data", data);
+      //console.log("data", data);
 
       (width = +svg.attr("width")),
         (height = +svg.attr("height")),
-          (innerRadius = height/3.5), //125
+        (innerRadius = height / 3.5), //125
         (outerRadius = Math.min(width, height) * 0.5),
         (g = svg
           .append("g")
@@ -100,7 +99,7 @@ var Radialchart = function () {
 
       z.domain(keys); //data.columns.slice(1) =keys
       //console.log("what d3.stack().keys(keys)(data) is: , d#1",d3.stack().keys(keys)(data))
-     //console.log("data before stacked", data);
+      //console.log("data before stacked", data);
       var index = 0;
       stackedData = keys.map((d) => {
         hr = Object.keys(data);
@@ -114,30 +113,30 @@ var Radialchart = function () {
         return hr;
         index++;
       }); //d3.stack().keys(keys)(data);
-     //console.log("stackedData", stackedData);
+      //console.log("stackedData", stackedData);
       stackedData.forEach((layer1) => {
         layer1.forEach((layer2) => {
           layer2.key0 = +layer1.key;
         });
       });
 
-    legend = g
+      legend = g
         .append("g")
         .selectAll("g")
         .data(keys.reverse()) //data.columns.slice(1) =keys
         .enter()
         .append("g")
         .attr("transform", function (d, i) {
-            return "translate(-270," + (i - (keys.length - 1) / 2) * 20 + ")";
+          return "translate(-270," + (i - (keys.length - 1) / 2) * 20 + ")";
         });
 
-    legend
+      legend
         .append("rect")
         .attr("width", 19)
         .attr("height", 16)
         .attr("fill", z);
 
-    legend
+      legend
         .append("text")
         .attr("x", 24)
         .attr("y", 3.5)
@@ -145,15 +144,15 @@ var Radialchart = function () {
         .attr("fill", "white")
         .style("font", "20px times")
         .text(function (d) {
-            return d;
-        })
+          return d;
+        });
 
       stackedData.forEach((val, shifti) => {
         g_sub = g.append("g");
-          
+
         g_sub.attr("class", "radialPiece");
         g_sub
-          .attr("transform", "translate(" + shiftonindex(shifti, 0, 0) +",0)")
+          .attr("transform", "translate(" + shiftonindex(shifti, 0, 0) + ",10)")
           .append("g")
           //.attr("class", "radialPiece")
           //.attr("transform", "translate(" + shifti * 40 + ",0)")
@@ -243,10 +242,12 @@ var Radialchart = function () {
               ? "rotate(90)translate(0,21)"
               : "rotate(-90)translate(0,-9)";
           })
-          .text(function(d) {  //changed 24 hour clock to only show odd hours
-            if((d.key+1) % 2 != 0){
-                return d.key+1; }
-            })
+          .text(function (d) {
+            //changed 24 hour clock to only show odd hours
+            if ((d.key + 1) % 2 != 0) {
+              return d.key + 1;
+            }
+          })
           .style("font", "20px times") //the font size of the radial chart
           .style("fill", "white"); //the color of the radial chart
 
@@ -277,10 +278,8 @@ var Radialchart = function () {
                 .attr("y", function(d) { return -y(y.ticks(10).pop()); })
                 .attr("dy", "-1em")
                 .text("Population");*/
+      }); //forEach End
 
-      }); //forEach End 
-
-      
       svg
         .append("rect")
         .on("mouseenter", mouseenterradial)
@@ -315,16 +314,19 @@ var Radialchart = function () {
     var ecoordinates = d3.mouse(this);
     ex = ecoordinates[0];
     ey = ecoordinates[1];
-   //console.log("Entered Radial here");
+    //console.log("Entered Radial here");
   }
 
   function shiftonindex(i, ex, x) {
-    return ((1 / 10) * (i * 500 + (x - ex) * 10 * i) - .3 * (x-ex)).toFixed(2);
+    return (
+      (1 / 10) * (i * 500 + (x - ex) * 10 * i) -
+      0.3 * (x - ex) -
+      100
+    ).toFixed(2);
   }
 
   function mouseleaveradial() {
-
-   //console.log("Left Radial");
+    //console.log("Left Radial");
   }
 
   function mousemoveradial() {
@@ -337,7 +339,7 @@ var Radialchart = function () {
     Array.from(G).forEach((radialChart, i) => {
       radialChart.setAttribute(
         "transform",
-        `translate(${shiftonindex(i, ex, x)}, 0)`
+        `translate(${shiftonindex(i, ex, x)}, 10)`
       );
     });
   }
@@ -426,36 +428,38 @@ var Radialchart = function () {
   }
 
   function gettotal(data, key1, key2) {
-      let uniqueKey1s = getUnique(data, key1).sort((a, b) => a - b);
-      let uniqueKey2s = getUnique(data, key2);
-      //console.log("uniqueKey1s: ", uniqueKey1s)
-      //let dict1 = {}
-      dict1 = uniqueKey1s.map((val1) => {
-          //console.log(val1);
-          return { key: val1 };
+    let uniqueKey1s = getUnique(data, key1).sort((a, b) => a - b);
+    let uniqueKey2s = getUnique(data, key2);
+    //console.log("uniqueKey1s: ", uniqueKey1s)
+    //let dict1 = {}
+    dict1 = uniqueKey1s.map((val1) => {
+      //console.log(val1);
+      return { key: val1 };
+    });
+    //dict1 = dict1.sortBy('key');;
+    //console.log("dict1: ", dict1);
+    //console.log(dict)
+    max = 0;
+    index = 0;
+    uniqueKey1s.forEach((key1Value) => {
+      dataOnlykey1 = data.filter((val) => val.properties[key1] === key1Value);
+      uniqueKey2s.forEach((key2Value) => {
+        listOfValue = dataOnlykey1.filter(
+          (val) => val.properties[key2] === key2Value
+        );
+        count = listOfValue.length;
+        //console.log('count', count)
+        if (key1Value === dict1[index].key) {
+          dict1[index][key2Value] = count;
+          if (count > max) {
+            max = count;
+          }
+        }
       });
-      //dict1 = dict1.sortBy('key');;
-      //console.log("dict1: ", dict1);
-      //console.log(dict)
-      max = 0
-      index = 0;
-      uniqueKey1s.forEach((key1Value) => {
-          dataOnlykey1 = data.filter((val) => val.properties[key1] === key1Value);
-          uniqueKey2s.forEach((key2Value) => {
-              listOfValue = dataOnlykey1.filter(
-                  (val) => val.properties[key2] === key2Value
-              );
-              count = listOfValue.length;
-              //console.log('count', count)
-              if (key1Value === dict1[index].key) {
-                  dict1[index][key2Value] = count;
-                  if (count > max){ max = count}
-              }
-          });
-          index++;
-      });
-      //console.log("max: ", max)
-      return max;
+      index++;
+    });
+    //console.log("max: ", max)
+    return max;
   }
 
   //unused function to take the top K keys instead of all them.
@@ -479,18 +483,18 @@ var Radialchart = function () {
       sortable = sortable.slice(sortable.length - k, sortable.length - 1);
 
       sortable.push(["key", test["key"]]);
-     //console.log("new sortable is", sortable);
+      //console.log("new sortable is", sortable);
 
       objSorted = {};
       sortable.forEach(function (item) {
         if (item[0] != "key" && !keys.includes(item[0])) {
-         //console.log("the item[0] is", item[0]);
+          //console.log("the item[0] is", item[0]);
           keys.push(item[0]);
         }
         objSorted[item[0]] = item[1];
       });
-     //console.log("keys", keys);
-     //console.log("the new sort is ", objSorted);
+      //console.log("keys", keys);
+      //console.log("the new sort is ", objSorted);
 
       data = objSorted;
       testdata.push(objSorted);

@@ -48,8 +48,9 @@ function runD3(geojson) {
 
     dispatchSelected.on("selected", function (data) {
       //get clientHeight
-      padding = screen.height / 8;
-      var h = screen.height / 3 - padding / 2;
+      padding = screen.height / 16;
+      var h = screen.height / 3 - padding;
+      var w = Math.trunc(screen.width / 2) - padding * 2;
       //console.log("h: ", h);
 
       if (isEmpty(data)) {
@@ -84,17 +85,14 @@ function runD3(geojson) {
       var barSvg = d3
         .select("body")
         .select("div.crosstabchart")
-        .style("height", `${Math.trunc(h + padding / 2)}px`)
+        .style("height", `${Math.trunc(h)}px`)
+        .style("width", `${Math.trunc(w)}px`)
         .append("svg")
         .classed("crosstabchart", true)
         .attr("id", "bar")
-        .attr("width", screen.width / 2 - 100)
-        .attr("height", h + padding / 2);
+        .attr("width", w)
+        .attr("height", h);
       //.style("height", `${Math.trunc(h + padding / 2)}px`);
-
-      d3.select("div.crosstabchart");
-
-      console.log("crosstabchart height: ", Math.trunc(h + padding / 2));
 
       crosstab.barchart(barSvg, selectedValues.flat());
 
@@ -102,12 +100,13 @@ function runD3(geojson) {
       var lineSvg = d3
         .select("body")
         .select("div.linechart")
-        .style("height", `${Math.trunc(h + padding / 2)}px`)
+        .style("height", `${Math.trunc(h)}px`)
+        .style("width", `${Math.trunc(w)}px`)
         .append("svg")
         .classed("linechart", true)
         .attr("id", "linesvg")
-        .attr("width", screen.width / 2 - 100)
-        .attr("height", h + padding / 2);
+        .attr("width", w)
+        .attr("height", h);
 
       linegraph = Linechart();
       linegraph.drawChart(lineSvg, selectedValues.flat());
@@ -124,9 +123,10 @@ function runD3(geojson) {
         .select("body")
         .select("div.radialchart")
         .style("height", `${Math.trunc(h)}px`)
+        .style("width", `${Math.trunc(w)}px`)
         .append("svg")
         .classed("radialchart", true)
-        .attr("width", screen.width / 2)
+        .attr("width", w)
         .attr("height", h);
       radialgraph.drawRadialChart(radialSvg, selectedValues.flat());
     });

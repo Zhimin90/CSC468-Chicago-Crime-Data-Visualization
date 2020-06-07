@@ -196,35 +196,36 @@ function runMapbox(map,crimeData) {
     //Below is the code for the toggle on/off buttons for the different categories: heatmap, crimes-point, and crime category labels
     //documentation via https://docs.mapbox.com/mapbox-gl-js/example/toggle-layers/
     var toggleableLayerIds = ['crime-heatmap','crime-location','crime-category'];     // enumerate ids of the layers
-    
+
     // set up the corresponding toggle button for each layer
     for (var i = 0; i < toggleableLayerIds.length; i++) {
-    var id = toggleableLayerIds[i];
-    
-    var link = document.createElement('a');
-    link.href = '#';
-    link.className = 'active';
-    link.textContent = id; 
-    
-    link.onclick = function(e) {
-    var clickedLayer = this.textContent;
-    e.preventDefault();
-    e.stopPropagation();
-    
-    var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-    
-    // toggle layer visibility by changing the layout object's visibility property
-    if (visibility === 'visible') {
-    map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-    this.className = '';
-    } else {
-    this.className = 'active';
-    map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-    }
-    };
-    
-    var layers = document.getElementById('menu');
-    layers.appendChild(link);
+        var id = toggleableLayerIds[i];
+        var link = document.createElement('a');
+        link.href = '#';
+        link.className = 'active';
+        link.textContent = id; 
+       
+        link.onclick = function(e) {
+            var clickedLayer = this.textContent;
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
+            if (visibility === undefined) { visibility = 'visible'} //first click
+            //console.log('visibility', visibility)
+            
+            // toggle layer visibility by changing the layout object's visibility property
+            if (visibility === 'visible') {
+                map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+                this.className = '';
+            } else {
+                this.className = 'active';
+                map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
+                }
+        };
+        
+        var layers = document.getElementById('menu');
+        layers.appendChild(link);
     } 
 
 

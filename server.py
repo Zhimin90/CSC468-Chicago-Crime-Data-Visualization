@@ -67,7 +67,7 @@ def getUpdatedCrimeData():
         'date'], ascending=[0])
 
     test_df['date'] = pd.to_datetime(test_df['date'])
-    test_df['updated_on'] = pd.to_datetime(test_df['updated_on'])
+    #test_df['updated_on'] = pd.to_datetime(test_df['updated_on'])
     test_df['latitude'] = pd.to_numeric(test_df['latitude'])
     test_df['longitude'] = pd.to_numeric(test_df['longitude'])
 
@@ -89,8 +89,8 @@ def getUpdatedCrimeData():
     #serialize date first
     crime_2020_gdf['date'] = crime_2020_gdf['date'].dt.strftime(
         '%Y-%m-%dT%H:%M:%S')
-    crime_2020_gdf['updated_on'] = crime_2020_gdf['updated_on'].dt.strftime(
-        '%Y-%m-%dT%H:%M:%S')
+    #crime_2020_gdf['updated_on'] = crime_2020_gdf['updated_on'].dt.strftime(
+    #    '%Y-%m-%dT%H:%M:%S')
 
     crime_2020_gdf = geopandas.GeoDataFrame(
         crime_2020_gdf, geometry=geopandas.points_from_xy(crime_2020_gdf.longitude, crime_2020_gdf.latitude))

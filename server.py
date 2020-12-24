@@ -47,7 +47,10 @@ def getUpdatedCrimeData():
 
     # First 2000 results, returned as JSON from API / converted to Python list of
     # dictionaries by sodapy.
-    results = client.get("ijzp-q8t2", order="date DESC", limit=70000)
+    results = client.get("ijzp-q8t2", order="date DESC", 
+        where = "date > '{}'".format((date.today()+relativedelta(months=-6)).strftime('%Y-%m')+'-01'), limit=1000000)
+
+    print("date > '{}'".format((date.today()+relativedelta(months=-6)).strftime('%Y-%m')+'-01'))
 
     # Convert to pandas DataFrame
     results_df = pd.DataFrame.from_records(results)
@@ -89,7 +92,6 @@ def getUpdatedCrimeData():
     crime_2020_gdf['updated_on'] = crime_2020_gdf['updated_on'].dt.strftime(
         '%Y-%m-%dT%H:%M:%S')
 
-    
     crime_2020_gdf = geopandas.GeoDataFrame(
         crime_2020_gdf, geometry=geopandas.points_from_xy(crime_2020_gdf.longitude, crime_2020_gdf.latitude))
     return crime_2020_gdf.to_json()

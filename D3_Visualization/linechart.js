@@ -17,8 +17,11 @@ var Linechart = function(){
           myColor = d3.scaleOrdinal()
           .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
 
+          //console.log("maxMonth: ",maxMonth);
+          //console.log(addMonths(maxMonth, -6), new Date(maxMonth));
+
           var x = d3.scaleTime()
-                    .domain([new Date("01"), maxMonth])
+            .domain([addMonths(maxMonth, -6).setDate(1), maxMonth.setDate(1)])
                     .range([ 0, width ]);
           
           var y = d3.scaleLinear()
@@ -141,9 +144,14 @@ var Linechart = function(){
       var wardData = [];
       var groupedData = d3.nest().key(function(d) {return new Date(d.properties.date).getMonth();}).entries(svgdata);
       for (var g of groupedData){
+        //console.log("g: ",g)
         var k = parseInt(g.key)+1;
+        //console.log("k: ", k)
         var count = g.values.length;
-        var month = new Date(k.toString());
+        var curMonth = new Date();
+        curMonth.setMonth(g.key);
+        curMonth.setDate(1);
+        var month = curMonth;
         wardData.push({date:month, value:count})
       }
       return wardData;
@@ -171,6 +179,7 @@ var Linechart = function(){
     }//findMaxCount
 
     function findMaxMonth(wardGroup){
+      console.log("wardGroup: ", wardGroup)
       var max = new Date("01");
       for(ward of wardGroup){
         for(w of ward.data){
@@ -190,6 +199,15 @@ var Linechart = function(){
       }
       return rts;
     }//getToolTipInfo
+
+  function addMonths(date, months) {
+    newDate = new Date(date);
+    newDate.setMonth(newDate.getMonth() + months);
+    return newDate;
+  }
+
+  var startMonth = addMonths(new Date(), -6).getMonth()
+  var endMonth = new Date(Date.now()).getMonth()
 
     return chart;
 }

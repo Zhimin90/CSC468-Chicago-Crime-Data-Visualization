@@ -15,6 +15,14 @@ function runMapbox(map,crimeData) {
         'December'
     ];
 
+    function addMonths(date, months) {
+        date.setMonth(date.getMonth() + months);
+        return date;
+    }
+
+    var startMonth = addMonths(new Date(), -6).getMonth()
+    var endMonth = new Date(Date.now()).getMonth()
+
     //Mapbox crime date filter
     function filterBy(startMonth, endMonth) {
         var filters = ['all', ['>=', 'month', startMonth], ['<=', 'month', endMonth]];
@@ -151,14 +159,14 @@ function runMapbox(map,crimeData) {
 
     // Set filter to first month of the year
     // 0 = January
-    filterBy(0, 1);
+    filterBy(new Date(Date.now()).getMonth() - 1, new Date(Date.now()).getMonth());
 
     //jQuery script for dual bar slider
     $(function () {
         $("#slider-range").slider({
             range: true,
-            min: new Date('2020.01.01').getTime() / 1000,
-            max: new Date('2020.06.01').getTime() / 1000,
+            min: (addMonths(new Date(), -6).getTime())  / 1000,
+            max: new Date(Date.now()).getTime() / 1000,
             step: 6,
             values: [new Date('2020.01.01').getTime() / 1000, new Date('2020.02.01').getTime() / 1000],
             slide: function (event, ui) {
@@ -174,18 +182,21 @@ function runMapbox(map,crimeData) {
     });
     
     //AutoPlay, set timer for 5 seconds recursively in a non-blocking function
-    function loopUntilDone(i) {
+    function loopUntilDone(i,startMonth,endMonth) {
         setTimeout( ()=>{
             //console.log('i: ', i)
             if (AutoPlay){
-                $("#amount").val(months[(0 + i) % 6] + " - " + months[(1 + i) % 6]);
-                filterBy((0 + i) % 6, (1 + i) % 6);
+                i = i % 6;
+                //console.log(startMonth, i);
+                curMonth = addMonths(new Date(), i - (6)).getMonth();
+                $("#amount").val(months[curMonth] + " - " + months[curMonth+1]);
+                filterBy(curMonth, curMonth+1);
             }
-            loopUntilDone(i + 1);
+            loopUntilDone(i + 1, startMonth, endMonth);
         },5000)
     }
 
-    loopUntilDone(0) 
+    loopUntilDone(0, startMonth, endMonth) 
 
     //map.scrollZoom.disable()
     //map.addControl(new mapboxgl.Navigation());

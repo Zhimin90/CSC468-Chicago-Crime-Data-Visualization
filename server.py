@@ -50,17 +50,10 @@ def getUpdatedCrimeData():
     results = client.get("ijzp-q8t2", order="date DESC", 
                          where="primary_type IN ('BATTERY','THEFT','CRIMINAL DAMAGE','ASSAULT','DECEPTIVE PRACTICE','OTHER OFFENSE') and date > '{}'".format((date.today()+relativedelta(months=-6)).strftime('%Y-%m')+'-01'), limit=1000000)
 
-    print("date > '{}'".format((date.today()+relativedelta(months=-6)).strftime('%Y-%m')+'-01'))
-
     # Convert to pandas DataFrame
     results_df = pd.DataFrame.from_records(results)
-    print("top type: \n", results_df.primary_type.value_counts()[:6])
-    print("top location description: \n",
-          results_df.location_description.value_counts()[:])
-    results_df = results_df[results_df.primary_type.isin(
-        results_df.primary_type.value_counts()[:6].index)]
     results_df = results_df[results_df.location_description.isin(
-        results_df.location_description.value_counts()[:].index)]
+        results_df.location_description.value_counts()[:6].index)]
         
     test_df = results_df
     xbound = (-87.9361, -87.5245)

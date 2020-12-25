@@ -4,6 +4,7 @@
 + ##### Allan Guan
 + ##### Khoa Nguyen
 ***
+live at https://chicago-crime-visualization.herokuapp.com/
 
 # Install and Run Flask Server
 in root directory where server.py is

@@ -48,12 +48,13 @@ def getUpdatedCrimeData():
     # First 2000 results, returned as JSON from API / converted to Python list of
     # dictionaries by sodapy.
     results = client.get("ijzp-q8t2", order="date DESC", 
-                         where="primary_type IN ('BATTERY','THEFT','CRIMINAL DAMAGE','ASSAULT','DECEPTIVE PRACTICE','OTHER OFFENSE') and date > '{}'".format((date.today()+relativedelta(months=-6)).strftime('%Y-%m')+'-01'), limit=1000000)
+                         where="location_description IN ('RESIDENCE', 'STREET', 'APARTMENT', 'SIDEWALK', 'OTHER (SPECIFY)', 'PARKING LOT / GARAGE (NON RESIDENTIAL)') and primary_type IN ('BATTERY', 'THEFT', 'CRIMINAL DAMAGE', 'ASSAULT', 'DECEPTIVE PRACTICE', 'OTHER OFFENSE') and date > '{}'".format((date.today()+relativedelta(months=-6)).strftime('%Y-%m')+'-01'), limit=1000000)
 
     # Convert to pandas DataFrame
     results_df = pd.DataFrame.from_records(results)
-    results_df = results_df[results_df.location_description.isin(
-        results_df.location_description.value_counts()[:6].index)]
+    #print(results_df.location_description.value_counts()[:6].index)
+    #results_df = results_df[results_df.location_description.isin(
+    #    results_df.location_description.value_counts()[:6].index)]
         
     test_df = results_df
     xbound = (-87.9361, -87.5245)
@@ -78,9 +79,8 @@ def getUpdatedCrimeData():
     filter1c = pd.to_numeric(geo_price_map['latitude']) > ybound[0]
     filter1d = pd.to_numeric(geo_price_map['latitude']) < ybound[1]
 
-    geo_price_map = geo_price_map[filter1a & filter1b & filter1c & filter1d]
+    crime_2020_gdf = geo_price_map[filter1a & filter1b & filter1c & filter1d]
 
-    crime_2020_gdf = geo_price_map[geo_price_map.date >pd.to_datetime("2020-01-01")]
     print("earliest query: ", min(crime_2020_gdf['date']))
     #serialize date first
     crime_2020_gdf['date'] = crime_2020_gdf['date'].dt.strftime(

@@ -60,9 +60,8 @@ def getUpdatedCrimeData():
     xbound = (-87.9361, -87.5245)
     ybound = (41.6447, 42.023)
 
-    test_df = test_df[test_df.latitude.notna()]
-    #.sort_values(['date'], ascending=[0])
-
+    test_df = test_df[test_df.latitude.notna()].sort_values(['date'], ascending=[0])
+    
     test_df['date'] = pd.to_datetime(test_df['date'])
     #test_df['updated_on'] = pd.to_datetime(test_df['updated_on'])
     test_df['latitude'] = pd.to_numeric(test_df['latitude'])
@@ -79,15 +78,16 @@ def getUpdatedCrimeData():
     filter1c = pd.to_numeric(geo_price_map['latitude']) > ybound[0]
     filter1d = pd.to_numeric(geo_price_map['latitude']) < ybound[1]
 
-    crime_2020_gdf = geo_price_map[filter1a & filter1b & filter1c & filter1d]
+    geo_price_map = geo_price_map[filter1a & filter1b & filter1c & filter1d]
 
     #print("earliest query: ", min(crime_2020_gdf['date']))
     #serialize date first
-    crime_2020_gdf['date'] = crime_2020_gdf['date'].dt.strftime(
+    geo_price_map['date'] = geo_price_map['date'].dt.strftime(
         '%Y-%m-%dT%H:%M:%S')
     #crime_2020_gdf['updated_on'] = crime_2020_gdf['updated_on'].dt.strftime(
     #    '%Y-%m-%dT%H:%M:%S')
 
     crime_2020_gdf = geopandas.GeoDataFrame(
-        crime_2020_gdf, geometry=geopandas.points_from_xy(crime_2020_gdf.longitude, crime_2020_gdf.latitude))
+        geo_price_map, geometry=geopandas.points_from_xy(geo_price_map.longitude, geo_price_map.latitude))
+    
     return crime_2020_gdf.to_json()

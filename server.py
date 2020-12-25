@@ -60,8 +60,8 @@ def getUpdatedCrimeData():
     xbound = (-87.9361, -87.5245)
     ybound = (41.6447, 42.023)
 
-    test_df = test_df[test_df.latitude.notna()].sort_values([
-        'date'], ascending=[0])
+    test_df = test_df[test_df.latitude.notna()]
+    #.sort_values(['date'], ascending=[0])
 
     test_df['date'] = pd.to_datetime(test_df['date'])
     #test_df['updated_on'] = pd.to_datetime(test_df['updated_on'])
@@ -81,7 +81,7 @@ def getUpdatedCrimeData():
 
     crime_2020_gdf = geo_price_map[filter1a & filter1b & filter1c & filter1d]
 
-    print("earliest query: ", min(crime_2020_gdf['date']))
+    #print("earliest query: ", min(crime_2020_gdf['date']))
     #serialize date first
     crime_2020_gdf['date'] = crime_2020_gdf['date'].dt.strftime(
         '%Y-%m-%dT%H:%M:%S')

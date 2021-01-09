@@ -25,7 +25,13 @@ function runMapbox(map,crimeData) {
 
     //Mapbox crime date filter
     function filterBy(startMonth, endMonth) {
-        var filters = ['all', ['>=', 'month', startMonth], ['<=', 'month', endMonth]];
+        if (endMonth < startMonth){
+            let currentYear = new Date(Date.now()).getYear() + 1900
+            var filters = ['all', ['>=', ['get', 'epoch'], new Date(`${currentYear-1}-${startMonth+1}-01`).getTime()], 
+                            ['<=', ['get', 'epoch'], new Date(`${currentYear}-${endMonth+2}-01`).getTime()]];
+        } else {
+            var filters = ['all', ['>=', 'month', startMonth], ['<=', 'month', endMonth]];
+        }
         map.setFilter('crime-location', filters);
         map.setFilter('crime-heatmap', filters);
         map.setFilter('crime-category', filters);
@@ -172,6 +178,7 @@ function runMapbox(map,crimeData) {
             slide: function (event, ui) {
                 //console.log(ui.values.map((date) => { return new Date(date * 1000).getMonth()}))
                 let dateRange = ui.values.map((date) => { return new Date(date * 1000).getMonth() })
+                console.log("filter by", dateRange[0], dateRange[1])
                 filterBy(dateRange[0], dateRange[1])
                 $("#amount").val((new Date(ui.values[0] * 1000).toDateString()) + " - " + (new Date(ui.values[1] * 1000)).toDateString());
             }

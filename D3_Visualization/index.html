@@ -274,6 +274,7 @@
       data.features = data.features.map(function (d) {
         d.properties.month = new Date(d.properties.date).getMonth();
         d.properties.hours = new Date(d.properties.date).getHours();
+        d.properties.epoch = new Date(d.properties.date).getTime();
         return d;
       });
 

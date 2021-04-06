@@ -22,5 +22,5 @@ requests==2.25.1
 Shapely==1.7.1
 six==1.15.0
 sodapy==2.1.0
-urllib3==1.26.2
+urllib3==1.26.4
 Werkzeug==1.0.1
